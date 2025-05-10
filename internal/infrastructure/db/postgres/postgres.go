@@ -5,7 +5,6 @@ import (
 	"crap/internal/config"
 	"fmt"
 	"time"
-
 	"github.com/jackc/pgx/v5"
 	"github.com/sirupsen/logrus"
 )
@@ -30,8 +29,6 @@ func(pg *Postgres) Connect(stop chan struct{}){
 		pg.cfg.Postgres.Port,
 		pg.cfg.Postgres.Database,
 	)
-	fmt.Println(pg.cfg.Postgres.Database)
-	fmt.Println(url)
 	ctx,cancel:=context.WithTimeout(context.Background(),time.Second*5)
 	defer cancel()
 	conn,err:=pgx.Connect(ctx,url)

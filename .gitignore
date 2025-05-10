@@ -1,4 +1,8 @@
 
 .env
 
-.yaml
+*.yaml
+
+/files
+
+logrus.log

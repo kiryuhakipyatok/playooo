@@ -2,7 +2,8 @@ package app
 
 import (
 	"crap/internal/config"
-	db "crap/internal/infrastructure/db/postgres"
+	pg "crap/internal/infrastructure/db/postgres"
+	r "crap/internal/infrastructure/db/redis"
 	"crap/internal/infrastructure/server"
 	"crap/pkg/logger"
 	"os"
@@ -24,10 +25,14 @@ func Run() {
 	quit:=make(chan os.Signal,1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3)
 	go func(){
 		defer wg.Done()
-		db.NewPostgres(cfg,logger).Connect(stop)
+		r.NewRedis(cfg,logger).Connect(stop)
+	}()
+	go func(){
+		defer wg.Done()
+		pg.NewPostgres(cfg,logger).Connect(stop)
 	}()
 	go func(){
 		defer wg.Done()
