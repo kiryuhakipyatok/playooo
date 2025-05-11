@@ -52,7 +52,7 @@ func (sheduleEvents *SheduleEvents) SetupSheduleEvents(stop chan struct{}) {
 				sheduleEvents.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
 			}
 			sheduleEvents.Logger.Infof("уведомление о начале события %v отправлено в %v", event.Body, time.Now())
-			if err := sheduleEvents.EventService.DeleteEvent(context.Background(), event); err != nil {
+			if err := sheduleEvents.EventService.DeleteEvent(context.Background(), event.Id.String()); err != nil {
 				sheduleEvents.Logger.WithError(err).Errorf("failed to delete event: %v", err)
 			}
 		}

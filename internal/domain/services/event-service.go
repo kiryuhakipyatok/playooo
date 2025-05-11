@@ -15,7 +15,7 @@ type EventService interface {
 	GetById(ctx context.Context, id string) (*entities.Event, error)
 	FetchEvents(ctx context.Context, amount, page int) ([]entities.Event, error)
 	FindUpcoming(ctx context.Context, time time.Time) ([]entities.Event, error)
-	DeleteEvent(ctx context.Context, event entities.Event) error
+	DeleteEvent(ctx context.Context, id string) error
 	Save(ctx context.Context, event entities.Event) error
 	Join(ctx context.Context, id, eid string) error
 	Unjoin(ctx context.Context, id, eid string) error
@@ -111,9 +111,13 @@ func (es eventService) Save(c context.Context, event entities.Event) error {
 	return nil
 }
 
-func (es *eventService)	DeleteEvent(ctx context.Context, event entities.Event) error{
+func (es *eventService)	DeleteEvent(ctx context.Context, id string) error{
 	_,err:=es.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-		if err:=es.EventRepository.Delete(c,event);err!=nil{
+		event,err:=es.EventRepository.FindById(c,id)
+		if err!=nil{
+			return nil,err
+		}
+		if err:=es.EventRepository.Delete(c,*event);err!=nil{
 			return nil,err
 		}
 		return nil,nil

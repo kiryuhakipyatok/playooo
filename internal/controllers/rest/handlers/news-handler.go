@@ -1,1 +1,93 @@
 package handlers
+
+import (
+	"context"
+	"crap/internal/domain/services"
+	"crap/internal/dto"
+	errh "crap/pkg/errors-handlers"
+	"errors"
+	"time"
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
+)
+
+type NewsHandler struct {
+	NewsService services.NewsService
+	Logger      *logrus.Logger
+	Validator   *validator.Validate
+}
+
+func NewNewsHandler(fs services.NewsService, l *logrus.Logger, v *validator.Validate) NewsHandler {
+	return NewsHandler{
+		NewsService: fs,
+		Logger:      l,
+		Validator:   v,
+	}
+}
+
+func(nh *NewsHandler) CreateNews(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
+	defer cancel()
+	eH := errh.NewErrorHander(c, nh.Logger, "create-news")
+	request := dto.CreateNewsRequest{}
+	if err := c.BodyParser(&request); err != nil {
+		return errh.ParseRequestError(eH, err)
+	}
+	if err := nh.Validator.Struct(request); err != nil {
+		return errh.ValidateRequestError(eH, err)
+	}
+	news, err := nh.NewsService.CreateNews(ctx, request.Title, request.Body, request.Link, request.Picture)
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			return errh.RequestTimedOut(eH, err)
+		}
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"error": "failed to create news: " + err.Error(),
+		})
+	}
+	return c.JSON(news)
+}
+
+func(nh *NewsHandler) GetById(c *fiber.Ctx) error{
+	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
+	defer cancel()
+	eH := errh.NewErrorHander(c, nh.Logger, "get-news")
+	id:=c.Query("id")
+	news,err:=nh.NewsService.GetById(ctx,id)
+	if err!=nil{
+		if errors.Is(err, context.DeadlineExceeded) {
+			return errh.RequestTimedOut(eH, err)
+		}
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"error":"failed to get news: "+ err.Error(),
+		})
+	}
+	return c.JSON(news)
+}
+
+func(nh *NewsHandler) GetNews(c *fiber.Ctx) error{
+	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
+	defer cancel()
+	eH := errh.NewErrorHander(c, nh.Logger, "get-news")
+	params:=dto.PaginationRequest{}
+	if err:=c.QueryParser(params);err!=nil{
+		return errh.ParseRequestError(eH,err)
+	}
+	if err:=nh.Validator.Struct(params);err!=nil{
+		return errh.ValidateRequestError(eH,err)
+	}
+	someNews,err:=nh.NewsService.FetchNews(ctx,params.Amount,params.Page)
+	if err!=nil{
+		if errors.Is(err, context.DeadlineExceeded) {
+			return errh.RequestTimedOut(eH, err)
+		}
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"error":"failed to get some news: "+ err.Error(),
+		})
+	}
+	return c.JSON(someNews)
+}

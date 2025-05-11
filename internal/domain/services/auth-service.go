@@ -13,9 +13,9 @@ import (
 )
 
 type AuthService interface {
-	Register(c context.Context, login, tg, password string) (*entities.User, error)
-	Login(c context.Context, login, password string) (*string, error)
-	Profile(c context.Context, claims string) (*entities.User, error)
+	Register(ctx context.Context, login, tg, password string) (*entities.User, error)
+	Login(ctx context.Context, login, password string) (*string, error)
+	Profile(ctx context.Context, claims string) (*entities.User, error)
 }
 
 type authService struct {
@@ -29,8 +29,8 @@ func NewAuthService(userRepository repositories.UserRepository) AuthService {
 	}
 }
 
-func (as *authService) Register(c context.Context, login, tg, password string) (*entities.User, error) {
-	b,err:=as.UserRepository.ExistByLoginOrTg(c, login, tg) 
+func (as *authService) Register(ctx context.Context, login, tg, password string) (*entities.User, error) {
+	b,err:=as.UserRepository.ExistByLoginOrTg(ctx, login, tg) 
 	if err!=nil{
 		return nil,err
 	}
@@ -47,17 +47,17 @@ func (as *authService) Register(c context.Context, login, tg, password string) (
 		Telegram: tg,
 		Password: hashPassword,
 	}
-	if err := as.UserRepository.Create(c, user); err != nil {
+	if err := as.UserRepository.Create(ctx, user); err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
-func(as *authService) Login(c context.Context, login,password string) (*string,error){
+func(as *authService) Login(ctx context.Context, login,password string) (*string,error){
 	if as.Config.Auth.Secret == "" {
 		return nil,errors.New("error secret .env value is empty")
 	}
-	user, err := as.UserRepository.FindBy(c,"login", login)
+	user, err := as.UserRepository.FindBy(ctx,"login", login)
 	if err != nil {
 		return nil,err
 	}
@@ -75,8 +75,8 @@ func(as *authService) Login(c context.Context, login,password string) (*string,e
 	return &token, nil
 }
 
-func (as *authService) Profile(c context.Context, claims string) (*entities.User, error) {
-	user, err := as.UserRepository.FindById(c, claims)
+func (as *authService) Profile(ctx context.Context, claims string) (*entities.User, error) {
+	user, err := as.UserRepository.FindById(ctx, claims)
 	if err != nil {
 		return nil, err
 	}
