@@ -21,7 +21,7 @@ import (
 )
 
 func Run() {
-	cfg, err := config.LoadConfig("config")
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
 	}
@@ -30,27 +30,27 @@ func Run() {
 	stop := make(chan struct{}, 1)
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	postgres, err := p.Connect(cfg)
+	postgres, err := p.Connect(*cfg)
 	if err != nil {
 		logger.Fatal("failed to connect to postgres")
 	} else {
 		logger.Info("connect to postgres succefully")
 	}
-	redis, err := r.Connect(cfg)
+	redis, err := r.Connect(*cfg)
 	if err != nil {
 		logger.Info("failed to connect to redis")
 	} else {
 		logger.Info("connect to redis succefully")
 	}
-	app, err := server.CreateServer(cfg)
+	app, err := server.CreateServer(*cfg)
 	if err != nil {
 		logger.WithError(err).Fatal("failed to create server")
 	} else {
 		logger.Info("server created succefully")
 	}
 	bcfg := bootstrap.NewBootstrapConfig(app, postgres, redis, logger, validator)
-	bcfg.BootstrapHandlers(stop, cfg)
-	bot,err:=bcfg.BootstrapBot(stop,cfg)
+	bcfg.BootstrapHandlers(stop, *cfg)
+	bot,err:=bcfg.BootstrapBot(stop,*cfg)
 	sheduler:=bcfg.BootstrapSheduler(stop,bot)
 	serverErr := make(chan error, 1)
 	if err!=nil{
