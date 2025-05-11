@@ -66,7 +66,6 @@ func Run() {
 			serverErr<-err
 		}
 	}()
-	close(serverErr)
 	errS := <-serverErr
 	if errS!=nil{
 		logger.WithError(errS).Fatal("failed to start server")
