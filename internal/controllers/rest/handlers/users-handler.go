@@ -13,21 +13,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type UserHandler struct {
+type UsersHandler struct {
 	UserService services.UserService
 	Logger      *logrus.Logger
 	Validator   *validator.Validate
 }
 
-func NewUserHandler(us services.UserService, l *logrus.Logger, v *validator.Validate) UserHandler {
-	return UserHandler{
+func NewUsersHandler(us services.UserService, l *logrus.Logger, v *validator.Validate) UsersHandler {
+	return UsersHandler{
 		UserService: us,
 		Logger:      l,
 		Validator:   v,
 	}
 }
 
-func(uh *UserHandler) GetById(c *fiber.Ctx) error {
+func(uh *UsersHandler) GetUser(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, uh.Logger, "get-user")
@@ -45,7 +45,7 @@ func(uh *UserHandler) GetById(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-func(uh *UserHandler) GetUsers(c *fiber.Ctx) error{
+func(uh *UsersHandler) GetUsers(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, uh.Logger, "get-user")
@@ -56,7 +56,7 @@ func(uh *UserHandler) GetUsers(c *fiber.Ctx) error{
 	if err:=uh.Validator.Struct(params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	users,err:=uh.UserService.Fetch(ctx,params.Amount,params.Page)
+	users,err:=uh.UserService.Fetch(ctx,params)
 	if err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
@@ -69,7 +69,7 @@ func(uh *UserHandler) GetUsers(c *fiber.Ctx) error{
 	return c.JSON(users)
 }
 
-func(uh *UserHandler) UploadAvatar(c *fiber.Ctx) error{
+func(uh *UsersHandler) UploadAvatar(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, uh.Logger, "upload-avatar")
@@ -80,7 +80,7 @@ func(uh *UserHandler) UploadAvatar(c *fiber.Ctx) error{
 	if err := uh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err:=uh.UserService.UploadAvatar(ctx,request.UserId,request.Picture);err!=nil{
+	if err:=uh.UserService.UploadAvatar(ctx,request);err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -94,7 +94,7 @@ func(uh *UserHandler) UploadAvatar(c *fiber.Ctx) error{
 	})
 }
 
-func(uh *UserHandler) RecordDiscord(c *fiber.Ctx) error{
+func(uh *UsersHandler) RecordDiscord(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, uh.Logger, "record-discord")
@@ -105,7 +105,7 @@ func(uh *UserHandler) RecordDiscord(c *fiber.Ctx) error{
 	if err := uh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err:=uh.UserService.RecordDiscord(ctx,request.UserId,request.Discord);err!=nil{
+	if err:=uh.UserService.RecordDiscord(ctx,request);err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -119,7 +119,7 @@ func(uh *UserHandler) RecordDiscord(c *fiber.Ctx) error{
 	})
 }
 
-func(uh *UserHandler) DeleteAvatar(c *fiber.Ctx) error{
+func(uh *UsersHandler) DeleteAvatar(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, uh.Logger, "upload-avatar")
@@ -138,7 +138,7 @@ func(uh *UserHandler) DeleteAvatar(c *fiber.Ctx) error{
 	})
 }
 
-func(uh *UserHandler) EditRating(c *fiber.Ctx) error{
+func(uh *UsersHandler) EditRating(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, uh.Logger, "edit-rating")
@@ -149,7 +149,7 @@ func(uh *UserHandler) EditRating(c *fiber.Ctx) error{
 	if err := uh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err:=uh.UserService.EditRating(ctx,request.UserId,request.Stars);err!=nil{
+	if err:=uh.UserService.EditRating(ctx,request);err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -159,6 +159,6 @@ func(uh *UserHandler) EditRating(c *fiber.Ctx) error{
 		})
 	}
 	return c.JSON(fiber.Map{
-		"message":"succes",
+		"message":"success",
 	})
 }

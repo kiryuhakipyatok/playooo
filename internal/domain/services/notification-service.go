@@ -4,6 +4,7 @@ import (
 	"context"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
+	"crap/internal/dto"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,7 +13,7 @@ import (
 type NotificationService interface {
 	CreateNotification(ctx context.Context, event entities.Event, msg string) error
 	DeleteNotification(ctx context.Context, id string) error
-	FetchNotifications(ctx context.Context, id string, amount, page int) ([]entities.Notification, error)
+	FetchNotifications(ctx context.Context, req dto.GetNotificationsRequest) ([]entities.Notification, error)
 	DeleteAllNotifications(ctx context.Context, id string) error
 }
 
@@ -83,12 +84,12 @@ func (ns *notificationService) DeleteNotification(ctx context.Context, id string
 	return nil
 }
 
-func (ns *notificationService) FetchNotifications(ctx context.Context, id string, amount, page int) ([]entities.Notification, error){
-	user,err:=ns.UserRepository.FindById(ctx,id)
+func (ns *notificationService) FetchNotifications(ctx context.Context, req dto.GetNotificationsRequest) ([]entities.Notification, error){
+	user,err:=ns.UserRepository.FindById(ctx,req.UserId)
 	if err!=nil{
 		return nil,err
 	}
-	notifications,err:=ns.NotificationRepository.Fetch(ctx,user.Id.String(),amount,page)
+	notifications,err:=ns.NotificationRepository.Fetch(ctx,user.Id.String(),req.Amount,req.Page)
 	if err!=nil{
 		return nil,err
 	}

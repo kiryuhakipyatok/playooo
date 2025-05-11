@@ -19,8 +19,5 @@ type NewsResponse struct {
 type EventResponse struct {
 	Id       uuid.UUID `json:"id"`
 	AuthorId uuid.UUID `json:"author-id"`
-	Body     string    `json:"body"`
-	Game     string    `json:"game"`
-	Max      int       `json:"max"`
 	Time     time.Time `json:"time"`
 }

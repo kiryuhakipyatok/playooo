@@ -4,14 +4,15 @@ import (
 	"context"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
+	"crap/internal/dto"
 	"slices"
 )
 
 type GameService interface {
-	AddGameToUser(ctx context.Context, name, id string) error
+	AddGameToUser(ctx context.Context, req dto.AddGameRequest) error
 	GetByName(ctx context.Context, name string) (*entities.Game, error)
-	FetchGames(ctx context.Context, amount, page int) ([]entities.Game, error)
-	DeleteGame(ctx context.Context, id, name string) error
+	FetchGames(ctx context.Context, req dto.PaginationRequest) ([]entities.Game, error)
+	DeleteGame(ctx context.Context, req dto.DeleteGameRequest) error
 }
 
 type gameService struct {
@@ -28,13 +29,13 @@ func NewGameService(gr repositories.GameRepository, ur repositories.UserReposito
 	}
 }
 
-func (gs *gameService) AddGameToUser(ctx context.Context, name, id string) error{
+func (gs *gameService) AddGameToUser(ctx context.Context, req dto.AddGameRequest) error{
 	_,err:=gs.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-		game,err:=gs.GameRepository.FindByName(c,name)
+		game,err:=gs.GameRepository.FindByName(c,req.Game)
 		if err!=nil{
 			return nil,err
 		}
-		user,err:=gs.UserRepository.FindById(c,id)
+		user,err:=gs.UserRepository.FindById(c,req.UserId)
 		if err!=nil{
 			return nil,err
 		}
@@ -62,21 +63,21 @@ func (gs *gameService) GetByName(ctx context.Context, name string) (*entities.Ga
 	return game,nil
 }
 
-func (gs *gameService) FetchGames(ctx context.Context, amount, page int) ([]entities.Game, error){
-	games,err:=gs.GameRepository.Fetch(ctx,amount,page)
+func (gs *gameService) FetchGames(ctx context.Context, req dto.PaginationRequest) ([]entities.Game, error){
+	games,err:=gs.GameRepository.Fetch(ctx,req.Amount,req.Page)
 	if err!=nil{
 		return nil,err
 	}
 	return games,nil
 }
 
-func (gs *gameService) DeleteGame(ctx context.Context, id, name string) error{
+func (gs *gameService) DeleteGame(ctx context.Context, req dto.DeleteGameRequest) error{
 	_,err:=gs.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-		game,err:=gs.GameRepository.FindByName(c,name)
+		game,err:=gs.GameRepository.FindByName(c,req.Game)
 		if err!=nil{
 			return nil,err
 		}
-		user,err:=gs.UserRepository.FindById(c,id)
+		user,err:=gs.UserRepository.FindById(c,req.UserId)
 		if err!=nil{
 			return nil,err
 		}

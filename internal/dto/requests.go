@@ -2,6 +2,11 @@ package dto
 
 import "mime/multipart"
 
+type PaginationRequest struct {
+	Page   int `json:"page" validate:"required,gt=0"`
+	Amount int `json:"amount" validate:"required,gt=0"`
+}
+
 type RegisterRequest struct {
 	Login    string `json:"login" validate:"required,max=100"`
 	Telegram string `json:"telegram" validate:"required"`
@@ -65,11 +70,6 @@ type CreateNewsRequest struct {
 	Picture *multipart.FileHeader `form:"picture" validate:"required"`
 }
 
-type PaginationRequest struct {
-	Page   int `json:"page" validate:"required,gt=0"`
-	Amount int `json:"amount" validate:"required,gt=0"`
-}
-
 type AddCommentRequest struct{
 	Whom string `json:"whom" validate:"required,max=6"`
 	UserId string `json:"user-id" validate:"required"`
@@ -78,7 +78,7 @@ type AddCommentRequest struct{
 }
 
 type GetCommentsRequest struct{
-	Whose string `json:"whom" validate:"required,max=6"`
+	Whose string `json:"whose" validate:"required,max=5"`
 	UserId string `json:"user-id" validate:"required"`
 	PaginationRequest
 }

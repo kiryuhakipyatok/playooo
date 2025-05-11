@@ -5,21 +5,20 @@ import (
 	"crap/internal/config"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
+	"crap/internal/dto"
 	"errors"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"os"
 	"path/filepath"
 	"time"
-
 	"github.com/google/uuid"
 )
 
 type NewsService interface {
-	CreateNews(ctx context.Context, title, body, link string, picture *multipart.FileHeader) (*entities.News, error)
+	CreateNews(ctx context.Context, req dto.CreateNewsRequest) (*entities.News, error)
 	GetById(ctx context.Context, id string) (*entities.News, error)
-	FetchNews(ctx context.Context, amount, page int) ([]entities.News, error)
+	FetchNews(ctx context.Context, req dto.PaginationRequest) ([]entities.News, error)
 }
 
 type newsService struct {
@@ -35,14 +34,14 @@ func NewNewsService(nr repositories.NewsRepository, t repositories.Transactor) N
 	}
 }
 
-func (ns *newsService) CreateNews(ctx context.Context, title, body, link string, picture *multipart.FileHeader) (*entities.News, error){
+func (ns *newsService) CreateNews(ctx context.Context, req dto.CreateNewsRequest) (*entities.News, error){
 	res,err:=ns.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
 			news := entities.News{
 			Id:    uuid.New(),
-			Title: title,
-			Body:  body,
+			Title: req.Title,
+			Body:  req.Body,
 			Time:  time.Now(),
-			Link:  link,
+			Link:  req.Link,
 		}
 	
 		uploadDir := "../../files/news-pictures"
@@ -52,17 +51,17 @@ func (ns *newsService) CreateNews(ctx context.Context, title, body, link string,
 		if _, err := os.Stat(uploadDir);err!=nil {
 			return nil, err
 		}
-		if filepath.Ext(picture.Filename) != ".png" || filepath.Ext(picture.Filename) != ".jpg"{
+		if filepath.Ext(req.Picture.Filename) != ".png" || filepath.Ext(req.Picture.Filename) != ".jpg"{
 			return nil,errors.New("incorrect picture format")
 		}
-		fileName := fmt.Sprintf("%s-news-picture%s", news.Id, filepath.Ext(picture.Filename))
+		fileName := fmt.Sprintf("%s-news-picture%s", news.Id, filepath.Ext(req.Picture.Filename))
 		filepath := filepath.Join(uploadDir, fileName)
 		dst, err := os.Create(filepath)
 		if err != nil {
 			return nil, err
 		}
 		defer dst.Close()
-		src, err := picture.Open()
+		src, err := req.Picture.Open()
 		if err != nil {
 			return nil, err
 		}
@@ -100,8 +99,8 @@ func (ns *newsService) GetById(ctx context.Context, id string) (*entities.News, 
 	return news,nil
 }
 
-func (ns *newsService) FetchNews(ctx context.Context, amount, page int) ([]entities.News, error){
-	news,err:=ns.NewsRepository.Fetch(ctx,amount,page)
+func (ns *newsService) FetchNews(ctx context.Context, req dto.PaginationRequest) ([]entities.News, error){
+	news,err:=ns.NewsRepository.Fetch(ctx,req.Amount,req.Page)
 	if err!=nil{
 		return nil,err
 	}

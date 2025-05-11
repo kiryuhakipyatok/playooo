@@ -38,7 +38,7 @@ func(gh *GamesHandler) AddGame(c *fiber.Ctx) error {
 	if err := gh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err := gh.GameService.AddGameToUser(ctx, request.Game, request.UserId); err != nil {
+	if err := gh.GameService.AddGameToUser(ctx, request); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -63,7 +63,7 @@ func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
 	if err := gh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err:=gh.GameService.DeleteGame(ctx,request.UserId,request.Game);err!=nil{
+	if err:=gh.GameService.DeleteGame(ctx,request);err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -88,7 +88,7 @@ func(gh *GamesHandler) GetGames(c *fiber.Ctx) error{
 	if err:=gh.Validator.Struct(params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	games,err:=gh.GameService.FetchGames(ctx,params.Amount,params.Page)
+	games,err:=gh.GameService.FetchGames(ctx,params)
 	if err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
@@ -105,7 +105,7 @@ func(gh *GamesHandler) GetGame(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "get-game")
-	title:=c.Query("game")
+	title:=c.Params("game")
 	game,err:=gh.GameService.GetByName(ctx,title)
 	if err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {

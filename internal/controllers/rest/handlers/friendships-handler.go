@@ -38,7 +38,7 @@ func (fh *FriendshipsHandler) AddFriend(c *fiber.Ctx) error {
 	if err := fh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err := fh.FriendshipsService.AddFriend(ctx, request.UserId, request.FriendLogin); err != nil {
+	if err := fh.FriendshipsService.AddFriend(ctx, request); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -63,7 +63,7 @@ func (fh *FriendshipsHandler) GetFriends(c *fiber.Ctx) error{
 	if err:=fh.Validator.Struct(params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	friends,err:=fh.FriendshipsService.GetFriends(ctx,params.UserId,params.Amount,params.Page)
+	friends,err:=fh.FriendshipsService.GetFriends(ctx,params)
 	if err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
@@ -87,7 +87,7 @@ func (fh *FriendshipsHandler) CancelFriendship(c *fiber.Ctx) error{
 	if err := fh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err:=fh.FriendshipsService.CancelFriendship(ctx,request.UserId,request.FriendId);err!=nil{
+	if err:=fh.FriendshipsService.CancelFriendship(ctx,request);err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -112,7 +112,7 @@ func (fh *FriendshipsHandler) AcceptFriendship(c *fiber.Ctx) error{
 	if err := fh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err:=fh.FriendshipsService.AcceptFriendship(ctx,request.UserId,request.FriendId);err!=nil{
+	if err:=fh.FriendshipsService.AcceptFriendship(ctx,request);err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -137,7 +137,7 @@ func (fh *FriendshipsHandler) GetFriendsRequests(c *fiber.Ctx) error{
 	if err:=fh.Validator.Struct(params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	requests,err:=fh.FriendshipsService.GetFriendRequests(ctx,params.UserId,params.Amount,params.Page)
+	requests,err:=fh.FriendshipsService.GetFriendRequests(ctx,params)
 	if err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)

@@ -4,13 +4,15 @@ import (
 	"context"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
-	"github.com/google/uuid"
+	"crap/internal/dto"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type CommentService interface {
-	AddComment(ctx context.Context, whom, id, rid, body string) (*entities.Comment, error)
-	GetComments(ctx context.Context, whose, id string, amount, page int) ([]entities.Comment, error)
+	AddComment(ctx context.Context, req dto.AddCommentRequest) (*entities.Comment, error)
+	GetComments(ctx context.Context, req dto.GetCommentsRequest) ([]entities.Comment, error)
 }
 
 type commentService struct{
@@ -21,7 +23,7 @@ type commentService struct{
 	Transactor        repositories.Transactor
 }
 
-func NewCommentRepository(cr repositories.CommentRepository,ur repositories.UserRepository, er repositories.EventRepository, nr repositories.NewsRepository,t repositories.Transactor) CommentService{
+func NewCommentService(cr repositories.CommentRepository,ur repositories.UserRepository, er repositories.EventRepository, nr repositories.NewsRepository,t repositories.Transactor) CommentService{
 	return &commentService{
 		CommentRepository: cr,
 		UserRepository: ur,
@@ -31,23 +33,46 @@ func NewCommentRepository(cr repositories.CommentRepository,ur repositories.User
 	}
 }
 
-func(cs *commentService) AddComment(ctx context.Context,whom, id, rid, body string) (*entities.Comment, error){
+func(cs *commentService) AddComment(ctx context.Context,req dto.AddCommentRequest) (*entities.Comment, error){
 	res,err:= cs.Transactor.WithinTransaction(ctx, func(c context.Context) (any, error) {
-		user,err:=cs.UserRepository.FindById(c,id)
+		user,err:=cs.UserRepository.FindById(c,req.UserId)
 		if err!=nil{
 			return nil,err
 		}
 		comment:=entities.Comment{
 			Id: uuid.New(),
 			AuthorId: user.Id,
-			Body: body,
+			Body: req.Body,
 			Time: time.Now(),
 		}
 		if err:=cs.CommentRepository.Create(c,comment);err!=nil{
 			return nil,err
 		}
-		if err:=cs.CommentRepository.Add(c,whom,rid,comment.Id.String());err!=nil{
-			return nil,err
+		switch req.Whom{
+		case "users":
+			receiver,err:=cs.UserRepository.FindById(c,req.ReceiverId)
+			if err!=nil{
+				return nil,err
+			}
+			if err:=cs.CommentRepository.AddToUser(c,receiver.Id.String(),comment.Id.String());err!=nil{
+				return nil,err
+			}
+		case "events":
+			event,err:=cs.EventRepository.FindById(c,req.ReceiverId)
+			if err!=nil{
+				return nil,err
+			}
+			if err:=cs.CommentRepository.AddToEvent(c,event.Id.String(),comment.Id.String());err!=nil{
+				return nil,err
+			}
+		case "news":
+			news,err:=cs.NewsRepository.FindById(c,req.ReceiverId)
+			if err!=nil{
+				return nil,err
+			}
+			if err:=cs.CommentRepository.AddToNews(c,news.Id.String(),comment.Id.String());err!=nil{
+				return nil,err
+			}
 		}
 		return &comment,nil
 	})
@@ -57,10 +82,27 @@ func(cs *commentService) AddComment(ctx context.Context,whom, id, rid, body stri
 	return res.(*entities.Comment),nil
 }
 
-func(cs *commentService) GetComments(ctx context.Context, whose, id string, amount, page int) ([]entities.Comment, error){
-	comments,err:=cs.CommentRepository.Fetch(ctx,whose,id,amount,page)
-	if err!=nil{
-		return nil,err
+func(cs *commentService) GetComments(ctx context.Context, req dto.GetCommentsRequest) ([]entities.Comment, error){
+	comments:=[]entities.Comment{}
+	switch req.Whose{
+	case "user":
+		var err error
+		comments,err=cs.CommentRepository.FetchFromUser(ctx,req.UserId,req.Amount,req.Page)
+		if err!=nil{
+			return nil,err
+		}
+	case "event":
+		var err error
+		comments,err=cs.CommentRepository.FetchFromEvent(ctx,req.UserId,req.Amount,req.Page)
+		if err!=nil{
+			return nil,err
+		}
+	case "news":
+		var err error
+		comments,err=cs.CommentRepository.FetchFromNews(ctx,req.UserId,req.Amount,req.Page)
+		if err!=nil{
+			return nil,err
+		}
 	}
 	return comments,nil
 }

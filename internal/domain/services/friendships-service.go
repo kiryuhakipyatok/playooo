@@ -4,14 +4,15 @@ import (
 	"context"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
+	"crap/internal/dto"
 )
 
 type FriendshipsService interface {
-	AddFriend(ctx context.Context, id, login string) error
-	GetFriends(ctx context.Context, id string, amount, page int) ([]entities.User, error)
-	CancelFriendship(ctx context.Context, id1, id2 string) error
-	AcceptFriendship(ctx context.Context, id1, id2 string) error
-	GetFriendRequests(ctx context.Context, id string, amount, page int) ([]entities.User, error)
+	AddFriend(ctx context.Context, req dto.AddFriendRequest) error
+	GetFriends(ctx context.Context, req dto.GetFriendsRequest) ([]entities.User, error)
+	CancelFriendship(ctx context.Context, req dto.CancelFriendshipRequest) error
+	AcceptFriendship(ctx context.Context, req dto.AcceptFriendshipRequest) error
+	GetFriendRequests(ctx context.Context, req dto.GetFriendsReqRequests) ([]entities.User, error)
 }
 
 type friendshipsService struct{
@@ -26,12 +27,12 @@ func NewFriendshipsService(fr repositories.FriendshipsRepository, ur repositorie
 	}
 }
 
-func(fr *friendshipsService) AddFriend(ctx context.Context, id, login string) error{
-	user1,err:=fr.UserRepository.FindById(ctx,id)
+func(fr *friendshipsService) AddFriend(ctx context.Context, req dto.AddFriendRequest) error{
+	user1,err:=fr.UserRepository.FindById(ctx,req.UserId)
 	if err!=nil{
 		return err
 	}
-	user2,err:=fr.UserRepository.FindBy(ctx,"login",login)
+	user2,err:=fr.UserRepository.FindBy(ctx,"login",req.FriendLogin)
 	if err!=nil{
 		return err
 	}
@@ -41,12 +42,12 @@ func(fr *friendshipsService) AddFriend(ctx context.Context, id, login string) er
 	return nil
 }
 
-func(fr *friendshipsService) GetFriends(ctx context.Context, id string, amount, page int) ([]entities.User, error){
-	user,err:=fr.UserRepository.FindById(ctx,id)
+func(fr *friendshipsService) GetFriends(ctx context.Context, req dto.GetFriendsRequest) ([]entities.User, error){
+	user,err:=fr.UserRepository.FindById(ctx,req.UserId)
 	if err!=nil{
 		return nil,err
 	}
-	friendsId,err:=fr.FriendshipsRepository.Fetch(ctx,user.Id.String(),amount,page)
+	friendsId,err:=fr.FriendshipsRepository.Fetch(ctx,user.Id.String(),req.Amount,req.Page)
 	if err!=nil{
 		return nil,err
 	}
@@ -61,12 +62,12 @@ func(fr *friendshipsService) GetFriends(ctx context.Context, id string, amount, 
 	return friends,nil
 }
 
-func(fr *friendshipsService) CancelFriendship(ctx context.Context, id1, id2 string) error{
-	user1,err:=fr.UserRepository.FindById(ctx,id1)
+func(fr *friendshipsService) CancelFriendship(ctx context.Context, req dto.CancelFriendshipRequest) error{
+	user1,err:=fr.UserRepository.FindById(ctx,req.UserId)
 	if err!=nil{
 		return err
 	}
-	user2,err:=fr.UserRepository.FindById(ctx,id2)
+	user2,err:=fr.UserRepository.FindById(ctx,req.FriendId)
 	if err!=nil{
 		return err
 	}
@@ -76,12 +77,12 @@ func(fr *friendshipsService) CancelFriendship(ctx context.Context, id1, id2 stri
 	return nil
 }
 
-func(fr *friendshipsService) AcceptFriendship(ctx context.Context, id1, id2 string) error{
-	user1,err:=fr.UserRepository.FindById(ctx,id1)
+func(fr *friendshipsService) AcceptFriendship(ctx context.Context, req dto.AcceptFriendshipRequest) error{
+	user1,err:=fr.UserRepository.FindById(ctx,req.UserId)
 	if err!=nil{
 		return err
 	}
-	user2,err:=fr.UserRepository.FindById(ctx, id2)
+	user2,err:=fr.UserRepository.FindById(ctx, req.FriendId)
 	if err!=nil{
 		return err
 	}
@@ -91,12 +92,12 @@ func(fr *friendshipsService) AcceptFriendship(ctx context.Context, id1, id2 stri
 	return nil
 }
 
-func(fr *friendshipsService) GetFriendRequests(ctx context.Context, id string, amount, page int) ([]entities.User, error){
-	user,err:=fr.UserRepository.FindById(ctx,id)
+func(fr *friendshipsService) GetFriendRequests(ctx context.Context, req dto.GetFriendsReqRequests) ([]entities.User, error){
+	user,err:=fr.UserRepository.FindById(ctx,req.UserId)
 	if err!=nil{
 		return nil,err
 	}
-	requestsId,err:=fr.FriendshipsRepository.FetchRequests(ctx,user.Id.String(),amount,page)
+	requestsId,err:=fr.FriendshipsRepository.FetchRequests(ctx,user.Id.String(),req.Amount,req.Page)
 	if err!=nil{
 		return nil,err
 	}

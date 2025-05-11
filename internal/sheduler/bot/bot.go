@@ -4,34 +4,29 @@ import (
 	"context"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
-	"log"
 	"strconv"
 	"sync"
 	"time"
+
 	"github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/sirupsen/logrus"
 )
 
 type Bot struct {
 	bot            	*tgbotapi.BotAPI
+	Logger *logrus.Logger
 	UserRepository 	repositories.UserRepository
 	EventRepository	repositories.EventRepository
-
 }
 
-func CreateBot(stop chan struct{}, userRepository repositories.UserRepository, eventRepository repositories.EventRepository, token string) (*Bot,error) {
+func CreateBot(l *logrus.Logger, userRepository repositories.UserRepository, eventRepository repositories.EventRepository, token string) *Bot {
 	var err error
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
-		return nil,err
+		return nil
 	}
-	Bot := Bot{bot: bot, UserRepository: userRepository,EventRepository: eventRepository}
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		Bot.listenForUpdates(stop)
-	}()
-	return &Bot,nil
+	Bot := Bot{bot: bot, UserRepository: userRepository,EventRepository: eventRepository, Logger: l}
+	return &Bot
 }
 
 func (b *Bot) SendMsg(event entities.Event, msg string) error {
@@ -50,21 +45,21 @@ func (b *Bot) SendMsg(event entities.Event, msg string) error {
 			chatID, _ := strconv.ParseInt(user.ChatId, 10, 64)
 			message := tgbotapi.NewMessage(chatID, msg)
 			if _, err := b.bot.Send(message); err != nil {
-				log.Printf("failed to send message to user %s: %v", user.Telegram, err)
+				b.Logger.Infof("failed to send message to user %s: %v", user.Telegram, err)
 			}
 		}
 	}
 	return nil
 }
 
-func (b *Bot) listenForUpdates(stop chan struct{}) {
+func (b *Bot) ListenForUpdates(stop chan struct{}) {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 	updates := b.bot.GetUpdatesChan(updateConfig)
 	for {
 		select {
 		case <-stop:
-			log.Println("stopping bot")
+			b.Logger.Info("stopping bot")
 			return
 		case update := <-updates:
 			if update.Message != nil {
@@ -83,7 +78,7 @@ func (b *Bot) handleMessage(update tgbotapi.Update) {
 	defer cancel()
 	user, err := b.UserRepository.FindBy(ctx,"telegram",username)
 	if err != nil {
-		log.Printf("user not found: %v", err)
+		b.Logger.WithError(err).Info("user not found")
 	}
 
 	keyboard := tgbotapi.NewReplyKeyboard(
@@ -97,36 +92,36 @@ func (b *Bot) handleMessage(update tgbotapi.Update) {
 	case "✅ Да, хочу":
 		if user.ChatId == "" {
 			if err := b.storeChatID(user, chatID); err != nil {
-				log.Printf("failed to store chatId: %v", err)
+				b.Logger.WithError(err).Info("failed to store chatID")
 			}
 			msg := tgbotapi.NewMessage(chatID, "Теперь вы будете получать уведомления от crap о начале ивентов!")
 			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			if _, err := b.bot.Send(msg); err != nil {
-				log.Printf("Failed to send message: %v", err)
+				b.Logger.WithError(err).Info("failed to send msg")
 			}
 		} else {
 			msg := tgbotapi.NewMessage(chatID, "Вы уже подписаны на уведомления.")
 			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			if _, err := b.bot.Send(msg); err != nil {
-				log.Printf("Failed to send message: %v", err)
+				b.Logger.WithError(err).Info("failed to send msg")
 			}
 		}
 
 	case "❌ Нет, не хочу":
 		if user.ChatId != "" {
 			if err := b.removeChatID(user); err != nil {
-				log.Printf("failed to remove chatId: %v", err)
+				b.Logger.WithError(err).Info("failed to remove chatID")
 			}
 			msg := tgbotapi.NewMessage(chatID, "Вы отписались от уведомлений.")
 			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			if _, err := b.bot.Send(msg); err != nil {
-				log.Printf("Failed to send message: %v", err)
+				b.Logger.WithError(err).Info("failed to send msg")
 			}
 		} else {
 			msg := tgbotapi.NewMessage(chatID, "Вы не подписаны на уведомления.")
 			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			if _, err := b.bot.Send(msg); err != nil {
-				log.Printf("Failed to send message: %v", err)
+				b.Logger.WithError(err).Info("failed to send msg")
 			}
 		}
 
@@ -134,7 +129,7 @@ func (b *Bot) handleMessage(update tgbotapi.Update) {
 		msg := tgbotapi.NewMessage(chatID, "Хотите ли вы получать уведомления о начале ивентов, к которым вы присоединились?")
 		msg.ReplyMarkup = keyboard
 		if _, err := b.bot.Send(msg); err != nil {
-			log.Printf("Failed to send message: %v", err)
+			b.Logger.WithError(err).Info("failed to send msg")
 		}
 	}
 }

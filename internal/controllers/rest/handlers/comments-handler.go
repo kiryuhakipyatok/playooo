@@ -37,7 +37,7 @@ func (ch *CommentsHandler) AddComment(c *fiber.Ctx) error{
 	if err:=ch.Validator.Struct(request);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	comment,err:=ch.CommentService.AddComment(ctx,request.Whom,request.UserId,request.ReceiverId,request.Body)
+	comment,err:=ch.CommentService.AddComment(ctx,request)
 	if err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)
@@ -61,7 +61,7 @@ func (ch *CommentsHandler) GetComments(c *fiber.Ctx) error{
 	if err:=ch.Validator.Struct(params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	comments,err:=ch.CommentService.GetComments(ctx,params.Whose,params.UserId,params.Amount,params.Page)
+	comments,err:=ch.CommentService.GetComments(ctx,params)
 	if err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)

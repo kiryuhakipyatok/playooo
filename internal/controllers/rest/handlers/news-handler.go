@@ -37,7 +37,7 @@ func(nh *NewsHandler) CreateNews(c *fiber.Ctx) error {
 	if err := nh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	news, err := nh.NewsService.CreateNews(ctx, request.Title, request.Body, request.Link, request.Picture)
+	news, err := nh.NewsService.CreateNews(ctx, request)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
@@ -47,7 +47,11 @@ func(nh *NewsHandler) CreateNews(c *fiber.Ctx) error {
 			"error": "failed to create news: " + err.Error(),
 		})
 	}
-	return c.JSON(news)
+	responce:=dto.NewsResponse{
+		Id: news.Id,
+		Title: news.Title,
+	}
+	return c.JSON(responce)
 }
 
 func(nh *NewsHandler) GetById(c *fiber.Ctx) error{
@@ -72,6 +76,24 @@ func(nh *NewsHandler) GetNews(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, nh.Logger, "get-news")
+	id:=c.Params("id")
+	news,err:=nh.NewsService.GetById(ctx,id)
+	if err!=nil{
+		if errors.Is(err, context.DeadlineExceeded) {
+			return errh.RequestTimedOut(eH, err)
+		}
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"error":"failed to get news: "+ err.Error(),
+		})
+	}
+	return c.JSON(news)
+}
+
+func(nh *NewsHandler) GetSomeNews(c *fiber.Ctx) error{
+	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
+	defer cancel()
+	eH := errh.NewErrorHander(c, nh.Logger, "get-news")
 	params:=dto.PaginationRequest{}
 	if err:=c.QueryParser(params);err!=nil{
 		return errh.ParseRequestError(eH,err)
@@ -79,7 +101,7 @@ func(nh *NewsHandler) GetNews(c *fiber.Ctx) error{
 	if err:=nh.Validator.Struct(params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	someNews,err:=nh.NewsService.FetchNews(ctx,params.Amount,params.Page)
+	someNews,err:=nh.NewsService.FetchNews(ctx,params)
 	if err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)

@@ -40,7 +40,7 @@ func(ah *AuthHandler) Register(c *fiber.Ctx) error{
 	if err:=ah.Validator.Struct(request);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	user,err:=ah.AuthService.Register(ctx,request.Login,request.Telegram,request.Password)
+	user,err:=ah.AuthService.Register(ctx,request)
 	if err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)
@@ -69,7 +69,7 @@ func (ah *AuthHandler) Login(c *fiber.Ctx) error{
 	if err:=ah.Validator.Struct(request);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	token,err:=ah.AuthService.Login(ctx,request.Login,request.Password)
+	token,err:=ah.AuthService.Login(ctx,request)
 	if err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)

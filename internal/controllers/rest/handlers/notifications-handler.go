@@ -76,7 +76,7 @@ func (nh *NotificationsHandler) GetNotifications(c *fiber.Ctx) error {
 	if err := nh.Validator.Struct(params); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	notifications,err := nh.NotificationService.FetchNotifications(ctx, params.UserId,params.Amount,params.Page)
+	notifications,err := nh.NotificationService.FetchNotifications(ctx, params)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)

@@ -5,11 +5,11 @@ import (
 	"crap/internal/config"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
+	"crap/internal/dto"
 	"errors"
 	"fmt"
 	"io"
 	"math"
-	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,11 +17,11 @@ import (
 
 type UserService interface {
 	GetById(ctx context.Context, id string) (*entities.User, error)
-	Fetch(ctx context.Context, amount, page int) ([]entities.User, error)
-	UploadAvatar(ctx context.Context, id string, picture *multipart.FileHeader) error
+	Fetch(ctx context.Context, req dto.PaginationRequest) ([]entities.User, error)
+	UploadAvatar(ctx context.Context, req dto.UploadAvatarRequest) error
 	DeleteAvatar(ctx context.Context, id string) error
-	RecordDiscord(ctx context.Context, id, ds string) error
-	EditRating(ctx context.Context, id string, stars int) error
+	RecordDiscord(ctx context.Context, req dto.RecordDiscordRequest) error
+	EditRating(ctx context.Context, req dto.EditRatingRequest) error
 }
 
 type userService struct {
@@ -45,17 +45,17 @@ func (us *userService) GetById(ctx context.Context, id string) (*entities.User, 
 	return user, nil
 }
 
-func (us *userService) Fetch(ctx context.Context, amount, page int) ([]entities.User, error) {
-	users, err := us.UserRepository.Fetch(ctx, amount, page)
+func (us *userService) Fetch(ctx context.Context, req dto.PaginationRequest) ([]entities.User, error) {
+	users, err := us.UserRepository.Fetch(ctx, req.Amount, req.Page)
 	if err != nil {
 		return nil, err
 	}
 	return users, nil
 }
 
-func (us *userService) UploadAvatar(ctx context.Context, id string, picture *multipart.FileHeader) error {
+func (us *userService) UploadAvatar(ctx context.Context, req dto.UploadAvatarRequest) error {
 	_, err := us.Transactor.WithinTransaction(ctx, func(c context.Context) (any, error) {
-		user, err := us.UserRepository.FindById(c, id)
+		user, err := us.UserRepository.FindById(c, req.UserId)
 		if err != nil {
 			return nil, err
 		}
@@ -66,14 +66,14 @@ func (us *userService) UploadAvatar(ctx context.Context, id string, picture *mul
 		if _, err := os.Stat(uploadDir); err != nil {
 			return nil, err
 		}
-		fileName := fmt.Sprintf("%s%s", user.Id, filepath.Ext(picture.Filename))
+		fileName := fmt.Sprintf("%s%s", user.Id, filepath.Ext(req.Picture.Filename))
 		filepath := filepath.Join(uploadDir, fileName)
 		dst, err := os.Create(filepath)
 		if err != nil {
 			return nil, err
 		}
 		defer dst.Close()
-		src, err := picture.Open()
+		src, err := req.Picture.Open()
 		if err != nil {
 			return nil, err
 		}
@@ -123,25 +123,25 @@ func (us *userService) DeleteAvatar(ctx context.Context, id string) error {
 	return nil
 }
 
-func (us *userService) RecordDiscord(ctx context.Context, id, ds string) error {
-	user, err := us.GetById(ctx, id)
+func (us *userService) RecordDiscord(ctx context.Context, req dto.RecordDiscordRequest) error {
+	user, err := us.GetById(ctx, req.UserId)
 	if err != nil {
 		return err
 	}
-	user.Discord = ds
+	user.Discord = req.Discord
 	if err := us.UserRepository.Save(ctx, *user); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (us *userService) EditRating(ctx context.Context, id string, stars int) error {
-	user, err := us.GetById(ctx, id)
+func (us *userService) EditRating(ctx context.Context, req dto.EditRatingRequest) error {
+	user, err := us.GetById(ctx, req.UserId)
 	if err != nil {
 		return err
 	}
 	user.NumberOfRatings++
-	user.TotalRating += stars
+	user.TotalRating += req.Stars
 	averageRating := float64(user.TotalRating) / float64(user.NumberOfRatings)
 	user.Rating = math.Round(averageRating*2) / 2
 	if err := us.UserRepository.Save(ctx, *user); err != nil {

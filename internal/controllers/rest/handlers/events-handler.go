@@ -37,7 +37,7 @@ func (eh *EventsHandler) CreateEvent(c *fiber.Ctx) error{
 	if err:=eh.Validator.Struct(request);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	event,err:=eh.EventService.CreateEvent(ctx,request.AuthorId,request.Body,request.Game,request.Max,request.Minute)
+	event,err:=eh.EventService.CreateEvent(ctx,request)
 	if err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)
@@ -47,10 +47,15 @@ func (eh *EventsHandler) CreateEvent(c *fiber.Ctx) error{
 			"error":"failed to create event: " +  err.Error(),
 		})
 	}
-	return c.JSON(event)
+	responce:=dto.EventResponse{
+		Id: event.Id,
+		AuthorId: event.AuthorId,
+		Time: event.Time,
+	}
+	return c.JSON(responce)
 }
 
-func(eh *EventsHandler) GetById(c *fiber.Ctx) error{
+func(eh *EventsHandler) GetEvent(c *fiber.Ctx) error{
 	ctx,cancel:=context.WithTimeout(c.Context(),time.Second*5)
 	defer cancel()
 	eH:=errh.NewErrorHander(c,eh.Logger,"get-event-by-id")
@@ -79,7 +84,7 @@ func(eh *EventsHandler) GetEvents(c *fiber.Ctx) error{
 	if err:=eh.Validator.Struct(params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	events,err:=eh.EventService.FetchEvents(ctx,params.Amount,params.Page)
+	events,err:=eh.EventService.FetchEvents(ctx,params)
 	if err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)
@@ -122,7 +127,7 @@ func(eh *EventsHandler) Join(c *fiber.Ctx) error{
 	if err:=eh.Validator.Struct(request);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	if err:=eh.EventService.Join(ctx,request.UserId,request.EventId);err!=nil{
+	if err:=eh.EventService.Join(ctx,request);err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)
 		}
@@ -147,7 +152,7 @@ func(eh *EventsHandler) Unjoin(c *fiber.Ctx) error{
 	if err:=eh.Validator.Struct(request);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	if err:=eh.EventService.Unjoin(ctx,request.UserId,request.EventId);err!=nil{
+	if err:=eh.EventService.Unjoin(ctx,request);err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
 			return errh.RequestTimedOut(eH,err)
 		}

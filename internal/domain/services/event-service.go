@@ -4,21 +4,23 @@ import (
 	"context"
 	"crap/internal/domain/entities"
 	"crap/internal/domain/repositories"
-	"time"
-	"slices"
+	"crap/internal/dto"
 	"errors"
+	"slices"
+	"time"
+
 	"github.com/google/uuid"
 )
 
 type EventService interface {
-	CreateEvent(ctx context.Context, id, body, name string, max, minute int) (*entities.Event, error)
+	CreateEvent(ctx context.Context,req dto.CreateEventRequest) (*entities.Event, error)
 	GetById(ctx context.Context, id string) (*entities.Event, error)
-	FetchEvents(ctx context.Context, amount, page int) ([]entities.Event, error)
+	FetchEvents(ctx context.Context, req dto.PaginationRequest) ([]entities.Event, error)
 	FindUpcoming(ctx context.Context, time time.Time) ([]entities.Event, error)
 	DeleteEvent(ctx context.Context, id string) error
 	Save(ctx context.Context, event entities.Event) error
-	Join(ctx context.Context, id, eid string) error
-	Unjoin(ctx context.Context, id, eid string) error
+	Join(ctx context.Context, req dto.JoinToEventRequest) error
+	Unjoin(ctx context.Context, req dto.UnjoinFromEventRequest) error
 }
 
 type eventService struct {
@@ -41,13 +43,13 @@ func NewEventService(
 	}
 }
 
-func (es *eventService)	CreateEvent(ctx context.Context, id, body, name string, max, minute int) (*entities.Event, error){
+func (es *eventService)	CreateEvent(ctx context.Context, req dto.CreateEventRequest) (*entities.Event, error){
 	res,err:=es.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-		user,err:=es.UserRepository.FindById(c,id)
+		user,err:=es.UserRepository.FindById(c,req.AuthorId)
 		if err!=nil{
 			return nil,err
 		}
-		game,err:=es.GameRepository.FindByName(c,name)
+		game,err:=es.GameRepository.FindByName(c,req.Game)
 		if err!=nil{
 			return nil,err
 		}
@@ -57,12 +59,12 @@ func (es *eventService)	CreateEvent(ctx context.Context, id, body, name string, 
 		event:=entities.Event{
 			Id: uuid.New(),
 			AuthorId: user.Id,
-			Body: body,
+			Body: req.Body,
 			Game: game.Name,
-			Max: max,
-			Time: time.Now().Add(time.Minute*time.Duration(minute)),
+			Max: req.Max,
+			Time: time.Now().Add(time.Minute*time.Duration(req.Minute)),
 		}
-		if minute <= 10 {
+		if req.Minute <= 10 {
 			event.NotifiedPre = true
 		}
 		if err:=es.EventRepository.Create(c,event);err!=nil{
@@ -88,8 +90,8 @@ func (es *eventService)	GetById(ctx context.Context, id string) (*entities.Event
 	return event,nil
 }
 
-func (es *eventService)	FetchEvents(ctx context.Context, amount, page int) ([]entities.Event, error){
-	events,err:=es.EventRepository.Fetch(ctx,amount,page)
+func (es *eventService)	FetchEvents(ctx context.Context, req dto.PaginationRequest) ([]entities.Event, error){
+	events,err:=es.EventRepository.Fetch(ctx,req.Amount,req.Page)
 	if err!=nil{
 		return nil,err
 	}
@@ -128,13 +130,13 @@ func (es *eventService)	DeleteEvent(ctx context.Context, id string) error{
 	return nil
 }
 
-func (es *eventService)	Join(ctx context.Context, id, eid string) error{
+func (es *eventService)	Join(ctx context.Context, req dto.JoinToEventRequest) error{
 	_,err:=es.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-		user,err:=es.UserRepository.FindById(c,id)
+		user,err:=es.UserRepository.FindById(c,req.UserId)
 		if err!=nil{
 			return nil,err
 		}
-		event,err:=es.EventRepository.FindById(c,eid)
+		event,err:=es.EventRepository.FindById(c,req.UserId)
 		if err!=nil{
 			return nil,err
 		}
@@ -149,13 +151,13 @@ func (es *eventService)	Join(ctx context.Context, id, eid string) error{
 	return nil
 }
 
-func (es *eventService)	Unjoin(ctx context.Context, id, eid string) error{
+func (es *eventService)	Unjoin(ctx context.Context, req dto.UnjoinFromEventRequest) error{
 	_,err:=es.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-		user,err:=es.UserRepository.FindById(c,id)
+		user,err:=es.UserRepository.FindById(c,req.UserId)
 		if err!=nil{
 			return nil,err
 		}
-		event,err:=es.EventRepository.FindById(c,eid)
+		event,err:=es.EventRepository.FindById(c,req.EventId)
 		if err!=nil{
 			return nil,err
 		}

@@ -10,50 +10,59 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type SheduleEvents struct {
-	NoticeService services.NotificationService
+type Sheduler struct {
+	NotificationService services.NotificationService
 	EventService  services.EventService
 	UserService   services.UserService
 	Logger        *logrus.Logger
 	Bot           *bot.Bot
 }
 
-func (sheduleEvents *SheduleEvents) SetupSheduleEvents(stop chan struct{}) {
+func (s *Sheduler) SetupSheduler(stop chan struct{}) {
+	if s.Bot != nil{
+		s.Logger.Info("starting sheduller with bot")
+	}else{
+		s.Logger.Info("bot is nil, shedule whithout bot")
+	}
 	cr := cron.New()
 	cr.AddFunc("@every 1m", func() {
 		now := time.Now()
-		upcoming, err := sheduleEvents.EventService.FindUpcoming(context.Background(), now.Add(10*time.Minute).Add(15*time.Second))
+		upcoming, err := s.EventService.FindUpcoming(context.Background(), now.Add(10*time.Minute).Add(15*time.Second))
 		if err != nil {
-			sheduleEvents.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
+			s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
 		}
 		for _, event := range upcoming {
 			if !event.NotifiedPre {
 				premsg := "cобытие " + event.Body + " начнется через 10 минут!"
-				sheduleEvents.NoticeService.CreateNotification(context.Background(), event, premsg)
-				if err := sheduleEvents.Bot.SendMsg(event, premsg); err != nil {
-					sheduleEvents.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
+				s.NotificationService.CreateNotification(context.Background(), event, premsg)
+				if s.Bot!=nil{
+					if err := s.Bot.SendMsg(event, premsg); err != nil {
+						s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
+					}	
 				}
-				sheduleEvents.Logger.Infof("уведомление о предстоящем событии %v отправлено в %v", event.Body, time.Now())
+				s.Logger.Infof("уведомление о предстоящем событии %v отправлено в %v", event.Body, time.Now())
 				event.NotifiedPre = true
-				if err := sheduleEvents.EventService.Save(context.Background(), event); err != nil {
-					sheduleEvents.Logger.WithError(err).Errorf("failed to save event: %v", err)
+				if err := s.EventService.Save(context.Background(), event); err != nil {
+					s.Logger.WithError(err).Errorf("failed to save event: %v", err)
 				}
 			}
 		}
-		current, err := sheduleEvents.EventService.FindUpcoming(context.Background(), now.Add(1*time.Minute).Add(15*time.Second))
+		current, err := s.EventService.FindUpcoming(context.Background(), now.Add(1*time.Minute).Add(15*time.Second))
 		if err != nil {
-			sheduleEvents.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
+			s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
 		}
 		for _, event := range current {
 			curmsg := "cобытие " + event.Body + " началось!"
-			sheduleEvents.NoticeService.CreateNotification(context.Background(), event, curmsg)
+			s.NotificationService.CreateNotification(context.Background(), event, curmsg)
 			fmt.Printf("event: %s", event.Id)
-			if err := sheduleEvents.Bot.SendMsg(event, curmsg); err != nil {
-				sheduleEvents.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
+			if s.Bot!=nil{
+					if err := s.Bot.SendMsg(event, curmsg); err != nil {
+				s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
 			}
-			sheduleEvents.Logger.Infof("уведомление о начале события %v отправлено в %v", event.Body, time.Now())
-			if err := sheduleEvents.EventService.DeleteEvent(context.Background(), event.Id.String()); err != nil {
-				sheduleEvents.Logger.WithError(err).Errorf("failed to delete event: %v", err)
+			}
+			s.Logger.Infof("уведомление о начале события %v отправлено в %v", event.Body, time.Now())
+			if err := s.EventService.DeleteEvent(context.Background(), event.Id.String()); err != nil {
+				s.Logger.WithError(err).Errorf("failed to delete event: %v", err)
 			}
 		}
 
@@ -61,8 +70,8 @@ func (sheduleEvents *SheduleEvents) SetupSheduleEvents(stop chan struct{}) {
 	cr.Start()
 	<-stop
 	if err := cr.Stop().Err(); err != nil {
-		sheduleEvents.Logger.Infof("error to close sheduler: %v", err)
+		s.Logger.WithError(err).Info("error to close sheduler")
 	} else {
-		sheduleEvents.Logger.Info("stopping scheduler")
+		s.Logger.Info("stopping scheduler")
 	}
 }
