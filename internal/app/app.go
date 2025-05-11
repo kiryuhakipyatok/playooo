@@ -52,7 +52,6 @@ func Run() {
 	bcfg.BootstrapHandlers(stop, *cfg)
 	bot,err:=bcfg.BootstrapBot(stop,*cfg)
 	sheduler:=bcfg.BootstrapSheduler(stop,bot)
-	serverErr := make(chan error, 1)
 	if err!=nil{
 		logger.WithError(err).Info("error start bot")
 	}else{
@@ -63,13 +62,9 @@ func Run() {
 	go func() {
 		defer wg.Done()
 		if err := app.Listen("0.0.0.0"+ ":" + cfg.Server.Port); err != nil {
-			serverErr<-err
+			logger.WithError(err).Fatal("failed to start server")
 		}
 	}()
-	errS := <-serverErr
-	if errS!=nil{
-		logger.WithError(errS).Fatal("failed to start server")
-	}
 	wg.Add(1)
 	go func(){
 		defer wg.Done()
