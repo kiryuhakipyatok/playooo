@@ -22,21 +22,21 @@ type AppCfg struct{
 }
 
 type ServerCfg struct{
-	Host string `env:"SERVER_HOST,required"`
-	Port string `env:"SERVER_PORT,required"`
+	Host string `env:"HOST,required"`
+	Port string `env:"PORT,required"`
 }
 
 type PostgresCfg struct{
-	Host string `env:"POSTGRES_HOST,required"`
-	Port string `env:"POSTGRES_PORT,required"`
-	Database string `env:"POSTGRES_DATABASE,required"`
+	Host string `env:"PGHOST,required"`
+	Port string `env:"PGPORT,required"`
+	Database string `env:"POSTGRES_DB,required"`
 	User string `env:"POSTGRES_USER,required"`
 	Password string `env:"POSTGRES_PASSWORD,required"`
 }
 
 type RedisCfg struct{
-	Host string `env:"REDIS_HOST,required"`
-	Port string `env:"REDIS_PORT,required"`
+	Host string `env:"REDISHOST,required"`
+	Port string `env:"REDISPORT,required"`
 	Password string `env:"REDIS_PASSWORD,required"`
 }
 

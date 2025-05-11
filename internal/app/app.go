@@ -62,7 +62,7 @@ func Run() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		if err := app.Listen(cfg.Server.Host + cfg.Server.Port); err != nil {
+		if err := app.Listen("0.0.0.0" + cfg.Server.Port); err != nil {
 			serverErr<-err
 		}
 	}()
