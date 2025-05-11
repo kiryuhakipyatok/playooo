@@ -13,36 +13,30 @@ import (
 )
 
 type Bot struct {
-	bot            	*tgbotapi.BotAPI
-	Logger *logrus.Logger
-	UserRepository 	repositories.UserRepository
-	EventRepository	repositories.EventRepository
+	bot             *tgbotapi.BotAPI
+	Logger          *logrus.Logger
+	UserRepository  repositories.UserRepository
+	EventRepository repositories.EventRepository
 }
 
-func CreateBot(stop chan struct{}, l *logrus.Logger, userRepository repositories.UserRepository, eventRepository repositories.EventRepository, token string) (*Bot,error) {
+func CreateBot(stop chan struct{}, l *logrus.Logger, userRepository repositories.UserRepository, eventRepository repositories.EventRepository, token string) (*Bot, error) {
 	var err error
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	Bot := Bot{bot: bot, UserRepository: userRepository,EventRepository: eventRepository, Logger: l}
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		Bot.listenForUpdates(stop)
-	}()
-	return &Bot,err
+	Bot := Bot{bot: bot, UserRepository: userRepository, EventRepository: eventRepository, Logger: l}
+	return &Bot, err
 }
 
 func (b *Bot) SendMsg(event entities.Event, msg string) error {
-	ctx,cancel:=context.WithTimeout(context.Background(),time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-	members,err:=b.EventRepository.FetchMembers(ctx,event.Id.String()) 
-	if err!=nil{
+	members, err := b.EventRepository.FetchMembers(ctx, event.Id.String())
+	if err != nil {
 		return err
 	}
-	for _, id := range members{
+	for _, id := range members {
 		user, err := b.UserRepository.FindById(context.Background(), id)
 		if err != nil {
 			return err
@@ -58,7 +52,7 @@ func (b *Bot) SendMsg(event entities.Event, msg string) error {
 	return nil
 }
 
-func (b *Bot) listenForUpdates(stop chan struct{}) {
+func (b *Bot) ListenForUpdates(stop chan struct{}) {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 	updates := b.bot.GetUpdatesChan(updateConfig)
@@ -80,9 +74,9 @@ func (b *Bot) handleMessage(update tgbotapi.Update) {
 	username := update.Message.From.UserName
 	chatID := update.Message.Chat.ID
 	text := update.Message.Text
-	ctx,cancel:=context.WithTimeout(context.Background(),time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-	user, err := b.UserRepository.FindBy(ctx,"telegram",username)
+	user, err := b.UserRepository.FindBy(ctx, "telegram", username)
 	if err != nil {
 		b.Logger.WithError(err).Info("user not found")
 	}

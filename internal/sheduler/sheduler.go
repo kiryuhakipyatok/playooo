@@ -25,53 +25,64 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 		s.Logger.Info("bot is nil, shedule whithout bot")
 	}
 	cr := cron.New()
-	cr.AddFunc("@every 1m", func() {
-		now := time.Now()
-		upcoming, err := s.EventService.FindUpcoming(context.Background(), now.Add(10*time.Minute).Add(15*time.Second))
-		if err != nil {
-			s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
-		}
-		for _, event := range upcoming {
-			if !event.NotifiedPre {
-				premsg := "cобытие " + event.Body + " начнется через 10 минут!"
-				s.NotificationService.CreateNotification(context.Background(), event, premsg)
-				if s.Bot!=nil{
-					if err := s.Bot.SendMsg(event, premsg); err != nil {
-						s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
+	if _,err:=cr.AddFunc("@every 1m", func() {
+		select{
+			case <-stop:
+				s.Logger.Info("stopping sheduler")
+			default:
+				now := time.Now()
+				ctx,cancel:=context.WithTimeout(context.Background(),time.Second*5)
+				defer cancel()
+				upcoming, err := s.EventService.FindUpcoming(ctx, now.Add(10*time.Minute).Add(15*time.Second))
+				if err != nil {
+					s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
+				}
+				for _, event := range upcoming {
+					if !event.NotifiedPre {
+					premsg := "cобытие " + event.Body + " начнется через 10 минут!"
+					s.NotificationService.CreateNotification(ctx, event, premsg)
+					if s.Bot!=nil{
+						if err := s.Bot.SendMsg(event, premsg); err != nil {
+							s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
+						}	
+					}
+					s.Logger.Infof("уведомление о предстоящем событии %v отправлено в %v", event.Body, time.Now())
+					event.NotifiedPre = true
+					if err := s.EventService.Save(context.Background(), event); err != nil {
+						s.Logger.WithError(err).Errorf("failed to save event: %v", err)
+					}
 					}	
 				}
-				s.Logger.Infof("уведомление о предстоящем событии %v отправлено в %v", event.Body, time.Now())
-				event.NotifiedPre = true
-				if err := s.EventService.Save(context.Background(), event); err != nil {
-					s.Logger.WithError(err).Errorf("failed to save event: %v", err)
+				current, err := s.EventService.FindUpcoming(context.Background(), now.Add(1*time.Minute).Add(15*time.Second))
+				if err != nil {
+					s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
+				}
+				for _, event := range current {
+				curmsg := "cобытие " + event.Body + " началось!"
+				s.NotificationService.CreateNotification(context.Background(), event, curmsg)
+				fmt.Printf("event: %s", event.Id)
+				if s.Bot!=nil{
+					if err := s.Bot.SendMsg(event, curmsg); err != nil {
+						s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
+					}
+				}
+				s.Logger.Infof("уведомление о начале события %v отправлено в %v", event.Body, time.Now())
+				if err := s.EventService.DeleteEvent(context.Background(), event.Id.String()); err != nil {
+					s.Logger.WithError(err).Errorf("failed to delete event: %v", err)
 				}
 			}
 		}
-		current, err := s.EventService.FindUpcoming(context.Background(), now.Add(1*time.Minute).Add(15*time.Second))
-		if err != nil {
-			s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
-		}
-		for _, event := range current {
-			curmsg := "cобытие " + event.Body + " началось!"
-			s.NotificationService.CreateNotification(context.Background(), event, curmsg)
-			fmt.Printf("event: %s", event.Id)
-			if s.Bot!=nil{
-					if err := s.Bot.SendMsg(event, curmsg); err != nil {
-				s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
-			}
-			}
-			s.Logger.Infof("уведомление о начале события %v отправлено в %v", event.Body, time.Now())
-			if err := s.EventService.DeleteEvent(context.Background(), event.Id.String()); err != nil {
-				s.Logger.WithError(err).Errorf("failed to delete event: %v", err)
-			}
-		}
-
 	})
+	err!=nil{
+		s.Logger.WithError(err).Error("failed to add cron job")
+		return
+	}
 	cr.Start()
 	<-stop
-	if err := cr.Stop().Err(); err != nil {
-		s.Logger.WithError(err).Info("error to close sheduler")
-	} else {
-		s.Logger.Info("stopping scheduler")
-	}
+	s.Logger.Info("stopping scheduler...")
+    if err := cr.Stop().Err(); err != nil {
+        s.Logger.WithError(err).Error("error stopping scheduler")
+    } else {
+        s.Logger.Info("scheduler stopped successfully")
+    }
 }

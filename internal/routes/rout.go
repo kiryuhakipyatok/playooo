@@ -4,7 +4,6 @@ import (
 	"crap/internal/controllers/rest/handlers"
 
 	"github.com/gofiber/fiber/v2"
-	
 )
 
 type RoutConfig struct {
@@ -16,7 +15,7 @@ type RoutConfig struct {
 	NewsHandler        *handlers.NewsHandler
 	NoticeHandler      *handlers.NotificationsHandler
 	FriendshipsHandler *handlers.FriendshipsHandler
-	CommentsHandler *handlers.CommentsHandler
+	CommentsHandler    *handlers.CommentsHandler
 }
 
 func (rcfg *RoutConfig) Setup() {
@@ -32,7 +31,7 @@ func (rcfg *RoutConfig) Setup() {
 }
 
 func (rcfg *RoutConfig) SetupUserRoute() {
-	userGroup:=rcfg.App.Group("/api/users")
+	userGroup := rcfg.App.Group("/api/users")
 
 	userGroup.Patch("/avatar/:id", rcfg.UserHandler.UploadAvatar)
 	userGroup.Patch("/discord", rcfg.UserHandler.RecordDiscord)
@@ -44,20 +43,20 @@ func (rcfg *RoutConfig) SetupUserRoute() {
 	userGroup.Get("", rcfg.UserHandler.GetUsers)
 }
 
-func (rcfg *RoutConfig) SetupFriendshipsRoute(){
-	friendshipGroup:=rcfg.App.Group("/api/friends")
+func (rcfg *RoutConfig) SetupFriendshipsRoute() {
+	friendshipGroup := rcfg.App.Group("/api/friends")
 
 	friendshipGroup.Patch("", rcfg.FriendshipsHandler.AddFriend)
 	friendshipGroup.Patch("/accept", rcfg.FriendshipsHandler.AcceptFriendship)
 
 	friendshipGroup.Delete("", rcfg.FriendshipsHandler.CancelFriendship)
 
-	friendshipGroup.Get("",rcfg.FriendshipsHandler.GetFriends)
-	friendshipGroup.Get("/requests",rcfg.FriendshipsHandler.GetFriendsRequests)
+	friendshipGroup.Get("", rcfg.FriendshipsHandler.GetFriends)
+	friendshipGroup.Get("/requests", rcfg.FriendshipsHandler.GetFriendsRequests)
 }
 
-func(rcfg *RoutConfig) SetupCommentRoute(){
-	commentGroup:=rcfg.App.Group("/api/comments")
+func (rcfg *RoutConfig) SetupCommentRoute() {
+	commentGroup := rcfg.App.Group("/api/comments")
 
 	commentGroup.Post("", rcfg.CommentsHandler.AddComment)
 
@@ -65,7 +64,7 @@ func(rcfg *RoutConfig) SetupCommentRoute(){
 }
 
 func (rcfg *RoutConfig) SetupAuthRoute() {
-	authGroup:=rcfg.App.Group("/api/auth")
+	authGroup := rcfg.App.Group("/api/auth")
 
 	authGroup.Post("/register", rcfg.AuthHandler.Register)
 	authGroup.Post("/login", rcfg.AuthHandler.Login)

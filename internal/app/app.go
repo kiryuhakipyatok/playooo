@@ -2,6 +2,9 @@ package app
 
 import (
 	"context"
+	"sync"
+
+	// "crap/internal/bootstrap"
 	"crap/internal/bootstrap"
 	"crap/internal/config"
 	p "crap/internal/infrastructure/db/postgres"
@@ -11,12 +14,11 @@ import (
 	"crap/pkg/validator"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
-	"crap/internal/sheduler/bot"
+
+	// "crap/internal/sheduler/bot"
 	"time"
 )
-
 
 func Run() {
 	cfg, err := config.LoadConfig("config")
@@ -30,7 +32,7 @@ func Run() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	postgres, err := p.Connect(cfg)
 	if err != nil {
-		logger.Info("failed to connect to postgres")
+		logger.Fatal("failed to connect to postgres")
 	} else {
 		logger.Info("connect to postgres succefully")
 	}
@@ -40,22 +42,6 @@ func Run() {
 	} else {
 		logger.Info("connect to redis succefully")
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	defer func(){	
-		if err := postgres.Close(ctx); err != nil {
-			logger.WithError(err).Fatal("failed to close postgres")
-		} else {
-			logger.Info("close postgres success")
-		}
-		if redis != nil {
-			if err := redis.Close(); err != nil {
-				logger.WithError(err).Fatal("failed to close redis")
-			} else {
-				logger.Info("close redis success")
-			}
-		}
-	}()
 	app, err := server.CreateServer(cfg)
 	if err != nil {
 		logger.WithError(err).Fatal("failed to create server")
@@ -64,37 +50,52 @@ func Run() {
 	}
 	bcfg := bootstrap.NewBootstrapConfig(app, postgres, redis, logger, validator)
 	bcfg.BootstrapHandlers(stop, cfg)
+	bot,err:=bcfg.BootstrapBot(stop,cfg)
+	sheduler:=bcfg.BootstrapSheduler(stop,bot)
+	serverErr := make(chan error, 1)
+	if err!=nil{
+		logger.WithError(err).Info("error start bot")
+	}else{
+		logger.Info("bot started successful")
+	}
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		if err := app.Listen(cfg.Server.Host + cfg.Server.Port); err != nil {
-			logger.WithError(err).Fatal("failed to start server")
+			serverErr<-err
 		}
 	}()
-	botChan := make(chan *bot.Bot)
+	wg.Add(1)
 	go func(){
 		defer wg.Done()
-		bot,err:=bootstrap.StartBot(cfg,postgres,redis,logger,stop)
-		if err!=nil{
-			logger.WithError(err).Info("failed to create bot")
-			return
-		}
-		logger.Info("bot created successfully")
-		botChan <- bot
-		close(botChan)
+		bot.ListenForUpdates(stop)
 	}()
+	wg.Add(1)
 	go func(){
 		defer wg.Done()
-		bcfg.BootstrapSheduler(stop,<-botChan)
+		sheduler.SetupSheduler(stop)
 	}()
 	<-quit
-	ctxS, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	close(quit)
+	close(stop)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := app.ShutdownWithContext(ctxS); err != nil {
+	if err := app.ShutdownWithContext(ctx); err != nil {
 		logger.WithError(err).Fatal("server forced to shutdown")
 	}
-	close(stop)
-	wg.Wait()
+	if err := postgres.Close(ctx); err != nil {
+		logger.WithError(err).Fatal("failed to close postgres")
+	} else {
+		logger.Info("close postgres success")
+	}
+	if redis != nil {
+		if err := redis.Close(); err != nil {
+			logger.WithError(err).Fatal("failed to close redis")
+		} else {
+			logger.Info("close redis success")
+		}
+	}
 	logger.Info("server stopped successfuly")
 }

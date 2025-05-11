@@ -83,7 +83,7 @@ func(bcfg *BootstrapConfig) BootstrapHandlers(stop chan struct{}, cfg config.Con
 	routConfig.Setup()
 }
 
-func(bcfg *BootstrapConfig) BootstrapSheduler(stop chan struct{}, bot *bot.Bot){
+func(bcfg *BootstrapConfig) BootstrapSheduler(stop chan struct{}, bot *bot.Bot) sheduler.Sheduler{
 	transactor := repositories.NewTransactor(bcfg.Postgres)
 	userRepository := repositories.NewUserRepository(bcfg.Postgres, bcfg.Redis)
 	userService := services.NewUserService(userRepository, transactor)
@@ -99,12 +99,15 @@ func(bcfg *BootstrapConfig) BootstrapSheduler(stop chan struct{}, bot *bot.Bot){
 		Logger: bcfg.Logger,
 		Bot: bot,
 	}
-	sheduler.SetupSheduler(stop)
+	return sheduler
 }
 
-// func(bcfg *BootstrapConfig) BootstrapBot(cfg config.Config) *bot.Bot{
-// 	userRepository := repositories.NewUserRepository(bcfg.Postgres, bcfg.Redis)
-// 	eventRepository := repositories.NewEventRepository(bcfg.Postgres, bcfg.Redis)
-// 	bot:=bot.CreateBot(bcfg.Logger,userRepository,eventRepository,cfg.Bot.Token)
-// 	return bot
-// }
+func(bcfg *BootstrapConfig) BootstrapBot(stop chan struct{}, cfg config.Config) (*bot.Bot,error){
+	userRepository := repositories.NewUserRepository(bcfg.Postgres, bcfg.Redis)
+	eventRepository := repositories.NewEventRepository(bcfg.Postgres, bcfg.Redis)
+	bot, err := bot.CreateBot(stop,bcfg.Logger, userRepository, eventRepository,cfg.Bot.Token)
+	if err != nil {
+		return nil,err
+	}
+	return bot, nil
+}
