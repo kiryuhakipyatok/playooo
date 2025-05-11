@@ -66,6 +66,11 @@ func Run() {
 			serverErr<-err
 		}
 	}()
+	close(serverErr)
+	errS := <-serverErr
+	if errS!=nil{
+		logger.WithError(errS).Fatal("failed to start server")
+	}
 	wg.Add(1)
 	go func(){
 		defer wg.Done()
