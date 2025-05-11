@@ -26,6 +26,19 @@ func NewCommentHandler(cs services.CommentService, l *logrus.Logger, v *validato
 	}
 }
 
+// AddComment godoc
+// @Summary Adding a comment
+// @Description Creates a new comment
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.AddCommentRequest true "Comment data"
+// @Success 200 {object} entities.Comment 
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /comments [post]
 func (ch *CommentsHandler) AddComment(c *fiber.Ctx) error{
 	ctx,cancel:=context.WithTimeout(c.Context(),time.Second*5)
 	defer cancel()
@@ -50,6 +63,21 @@ func (ch *CommentsHandler) AddComment(c *fiber.Ctx) error{
 	return c.JSON(comment)
 }
 
+// GetComments godoc
+// @Summary Receiving comments
+// @Description Returns a list of comments by parameters
+// @Tags comments
+// @Produce json
+// @Param whose query string false "whose"
+// @Param userId query string false "user ID"
+// @Param newsId query string false "news ID"
+// @Param amount query int false "amount"
+// @Param page query int false "page"
+// @Success 200 {array} entities.Comment "List of comments"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /comments [get]
 func (ch *CommentsHandler) GetComments(c *fiber.Ctx) error{
 	ctx,cancel:=context.WithTimeout(c.Context(),time.Second*5)
 	defer cancel()

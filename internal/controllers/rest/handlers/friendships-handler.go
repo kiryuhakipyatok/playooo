@@ -27,6 +27,19 @@ func NewFriendshipsHandler(fs services.FriendshipsService, l *logrus.Logger, v *
 	}
 }
 
+// AddFriend godoc
+// @Summary Add a new friend
+// @Description Send a friend request to another user
+// @Tags friends
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.AddFriendRequest true "Add Friend Request"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /friends/add [post]
 func (fh *FriendshipsHandler) AddFriend(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -52,6 +65,19 @@ func (fh *FriendshipsHandler) AddFriend(c *fiber.Ctx) error {
 	})
 }
 
+// GetFriends godoc
+// @Summary Get user's friends list
+// @Description Retrieve the list of friends for a user
+// @Tags friends
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request query dto.GetFriendsRequest true "Get Friends Request"
+// @Success 200 {array} entities.User "List of friends"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /friends [get]
 func (fh *FriendshipsHandler) GetFriends(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -76,6 +102,19 @@ func (fh *FriendshipsHandler) GetFriends(c *fiber.Ctx) error{
 	return c.JSON(friends)
 }
 
+// CancelFriendship godoc
+// @Summary Cancel a friendship
+// @Description Remove a friend or cancel a pending friend request
+// @Tags friends
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.CancelFriendshipRequest true "Cancel Friendship Request"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /friends/cancel [post]
 func (fh *FriendshipsHandler) CancelFriendship(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -101,6 +140,18 @@ func (fh *FriendshipsHandler) CancelFriendship(c *fiber.Ctx) error{
 	})
 }
 
+// AcceptFriendship godoc
+// @Summary Accept a friend request
+// @Description Accept a pending friend request from another user
+// @Tags friends
+// @Accept json
+// @Produce json
+// @Param request body dto.AcceptFriendshipRequest true "Accept Friendship Request"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /friends/accept [post]
 func (fh *FriendshipsHandler) AcceptFriendship(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -126,6 +177,18 @@ func (fh *FriendshipsHandler) AcceptFriendship(c *fiber.Ctx) error{
 	})
 }
 
+// GetFriendsRequests godoc
+// @Summary Get friend requests
+// @Description Retrieve pending friend requests for a user
+// @Tags friends
+// @Accept json
+// @Produce json
+// @Param request query dto.GetFriendsReqRequests true "Get Friend Requests"
+// @Success 200 {array} entities.User "List of friend requests"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /friends/requests [get]
 func (fh *FriendshipsHandler) GetFriendsRequests(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()

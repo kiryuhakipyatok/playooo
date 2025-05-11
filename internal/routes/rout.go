@@ -4,7 +4,7 @@ import (
 	"crap/internal/controllers/rest/handlers"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/swagger"
+	
 )
 
 type RoutConfig struct {
@@ -28,7 +28,7 @@ func (rcfg *RoutConfig) Setup() {
 	rcfg.SetupNotificationsRoute()
 	rcfg.SetupFriendshipsRoute()
 	rcfg.SetupCommentRoute()
-	rcfg.SetupSwaggerConfig()
+	// rcfg.SetupSwaggerConfig()
 }
 
 func (rcfg *RoutConfig) SetupUserRoute() {
@@ -65,11 +65,13 @@ func(rcfg *RoutConfig) SetupCommentRoute(){
 }
 
 func (rcfg *RoutConfig) SetupAuthRoute() {
-	rcfg.App.Post("/api/register", rcfg.AuthHandler.Register)
-	rcfg.App.Post("/api/login", rcfg.AuthHandler.Login)
-	rcfg.App.Post("/api/logout", rcfg.AuthHandler.Logout)
+	authGroup:=rcfg.App.Group("/api/auth")
 
-	rcfg.App.Get("/api/profile", rcfg.AuthHandler.Profile)
+	authGroup.Post("/register", rcfg.AuthHandler.Register)
+	authGroup.Post("/login", rcfg.AuthHandler.Login)
+	authGroup.Post("/logout", rcfg.AuthHandler.Logout)
+
+	authGroup.Get("/profile", rcfg.AuthHandler.Profile)
 }
 
 func (rcfg *RoutConfig) SetupGameRoute() {
@@ -112,6 +114,6 @@ func (cfg *RoutConfig) SetupNotificationsRoute() {
 	notificationsGroup.Get("", cfg.NoticeHandler.GetNotifications)
 }
 
-func (cfg *RoutConfig) SetupSwaggerConfig() {
-	cfg.App.Get("/swagger/*", swagger.HandlerDefault)
-}
+// func (cfg *RoutConfig) SetupSwaggerConfig() {
+// 	cfg.App.Get("/swagger/*", swagger.HandlerDefault)
+// }

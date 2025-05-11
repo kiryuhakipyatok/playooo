@@ -27,6 +27,19 @@ func NewNotificationsHandler(ns services.NotificationService, l *logrus.Logger, 
 	}
 }
 
+// DeleteNotification godoc
+// @Summary Delete notification
+// @Description Delete specific notification by ID
+// @Tags notifications
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path string true "Notification ID"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /notifications/{id} [delete]
 func (nh *NotificationsHandler) DeleteNotification(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -46,6 +59,19 @@ func (nh *NotificationsHandler) DeleteNotification(c *fiber.Ctx) error {
 	})
 }
 
+// DeleteAllNotifications godoc
+// @Summary Delete all notifications
+// @Description Delete all notifications for user
+// @Tags notifications
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path string true "User ID"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /notifications/all/{id} [delete]
 func (nh *NotificationsHandler) DeleteAllNotifications(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -65,6 +91,19 @@ func (nh *NotificationsHandler) DeleteAllNotifications(c *fiber.Ctx) error {
 	})
 }
 
+// GetNotifications godoc
+// @Summary Get notifications
+// @Description Get paginated list of notifications
+// @Tags notifications
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request query dto.GetNotificationsRequest true "Pagination and filter parameters"
+// @Success 200 {array} entities.Notification "List of notifications"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /notifications [get]
 func (nh *NotificationsHandler) GetNotifications(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()

@@ -27,6 +27,19 @@ func NewGamesHandler(fs services.GameService, l *logrus.Logger, v *validator.Val
 	}
 }
 
+// AddGame godoc
+// @Summary Add a game to user
+// @Description Add a game to user's collection
+// @Tags games
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.AddGameRequest true "Add Game Request"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /games [post]
 func(gh *GamesHandler) AddGame(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -52,6 +65,19 @@ func(gh *GamesHandler) AddGame(c *fiber.Ctx) error {
 	})
 }
 
+// DeleteGame godoc
+// @Summary Delete a game from user
+// @Description Remove a game from user's collection
+// @Tags games
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.DeleteGameRequest true "Delete Game Request"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /games [delete]
 func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -77,6 +103,19 @@ func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
 	})
 }
 
+// GetGames godoc
+// @Summary Get user's games
+// @Description Retrieve paginated list of user's games
+// @Tags games
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request query dto.PaginationRequest true "Pagination parameters"
+// @Success 200 {array} entities.Game "List of games"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /games [get]
 func(gh *GamesHandler) GetGames(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -101,6 +140,19 @@ func(gh *GamesHandler) GetGames(c *fiber.Ctx) error{
 	return c.JSON(games)
 }
 
+// GetGame godoc
+// @Summary Get game details
+// @Description Get detailed information about specific game
+// @Tags games
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param game path string true "Game title"
+// @Success 200 {object} entities.Game "Game data"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /games/{game} [get]
 func(gh *GamesHandler) GetGame(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()

@@ -5,10 +5,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/jwt/v3"
+	"github.com/gofiber/swagger"
 )
 
 func CreateServer(cfg config.Config) (*fiber.App,error){
 	app:=fiber.New()
+	app.Get("/swagger/*", swagger.HandlerDefault)
 	app.Static("files", "../../files")
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "*",
@@ -17,9 +19,15 @@ func CreateServer(cfg config.Config) (*fiber.App,error){
 		ExposeHeaders:    "Content-Length",
 		AllowCredentials: false,
 	}),func (c *fiber.Ctx) error {
-		if c.Path() == "/api/register" || c.Path() == "/api/login"{
-			return c.Next()
-		}
+		excludedPaths := map[string]bool{
+            "/api/register": true,
+            "/api/login":    true,
+        }
+
+        if excludedPaths[c.Path()] {
+            return c.Next()
+        }
+	
 		return jwtware.New(jwtware.Config{
 			SigningKey: []byte(cfg.Auth.Secret),
 			ErrorHandler: func(c *fiber.Ctx, err error) error {

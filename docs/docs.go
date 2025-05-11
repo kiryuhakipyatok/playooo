@@ -14,17 +14,2267 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "User login and receiving JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User authentication",
+                "parameters": [
+                    {
+                        "description": "Login data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Clears the JWT cookie",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout",
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/profile": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Returns the profile data of the current user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Getting a logged in profile",
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Creates a new user in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "Registration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/comments": {
+            "get": {
+                "description": "Returns a list of comments by parameters",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comments"
+                ],
+                "summary": "Receiving comments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "whose",
+                        "name": "whose",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "user ID",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "news ID",
+                        "name": "newsId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "amount",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of comments",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Comment"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Creates a new comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comments"
+                ],
+                "summary": "Adding a comment",
+                "parameters": [
+                    {
+                        "description": "Comment data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddCommentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Comment"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events": {
+            "get": {
+                "description": "Returns a list of events with pagination",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Getting a list of events",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "amount",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Event"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Creates a new event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Create an event",
+                "parameters": [
+                    {
+                        "description": "Event data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EventResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/join": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Adds a user to the event participants",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Joining the event",
+                "parameters": [
+                    {
+                        "description": "Data for join to event",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.JoinToEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/unjoin": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Removes a user from the event participants",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Exit event",
+                "parameters": [
+                    {
+                        "description": "Data for unjoin from event",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UnjoinFromEventRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/{id}": {
+            "get": {
+                "description": "Returns an event by its id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Getting event by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "event Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Event"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Deletes an event by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Deleting an event",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/friends": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the list of friends for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "friends"
+                ],
+                "summary": "Get user's friends list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "user-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of friends",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/accept": {
+            "post": {
+                "description": "Accept a pending friend request from another user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "friends"
+                ],
+                "summary": "Accept a friend request",
+                "parameters": [
+                    {
+                        "description": "Accept Friendship Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AcceptFriendshipRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Send a friend request to another user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "friends"
+                ],
+                "summary": "Add a new friend",
+                "parameters": [
+                    {
+                        "description": "Add Friend Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddFriendRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/cancel": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove a friend or cancel a pending friend request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "friends"
+                ],
+                "summary": "Cancel a friendship",
+                "parameters": [
+                    {
+                        "description": "Cancel Friendship Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CancelFriendshipRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/friends/requests": {
+            "get": {
+                "description": "Retrieve pending friend requests for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "friends"
+                ],
+                "summary": "Get friend requests",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "user-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of friend requests",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/games": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve paginated list of user's games",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Get user's games",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of games",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Game"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a game to user's collection",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Add a game to user",
+                "parameters": [
+                    {
+                        "description": "Add Game Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove a game from user's collection",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Delete a game from user",
+                "parameters": [
+                    {
+                        "description": "Delete Game Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeleteGameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{game}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get detailed information about specific game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Get game details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game title",
+                        "name": "game",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Game data",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Game"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/news": {
+            "get": {
+                "description": "Get paginated list of news articles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "news"
+                ],
+                "summary": "Get paginated news",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of news",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.News"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new news article",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "news"
+                ],
+                "summary": "Create news article",
+                "parameters": [
+                    {
+                        "description": "News creation data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateNewsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "News data",
+                        "schema": {
+                            "$ref": "#/definitions/dto.NewsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/news/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get news article by its ID (passed as path parameter)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "news"
+                ],
+                "summary": "Get news by ID (path)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "News ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "News data",
+                        "schema": {
+                            "$ref": "#/definitions/entities.News"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get paginated list of notifications",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Get notifications",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "user-id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of notifications",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Notification"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/all/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete all notifications for user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Delete all notifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/notifications/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete specific notification by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Delete notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notification ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get paginated list of users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get users list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/avatar": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Upload or update user avatar image",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Upload user avatar",
+                "parameters": [
+                    {
+                        "description": "Avatar upload data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UploadAvatarRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/avatar/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove user's avatar image",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete user avatar",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/discord": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Link user account with Discord",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Record Discord association",
+                "parameters": [
+                    {
+                        "description": "Discord association data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RecordDiscordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/rating": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update user's rating value",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Edit user rating",
+                "parameters": [
+                    {
+                        "description": "Rating edit data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.EditRatingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get detailed information about specific user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.User"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.AcceptFriendshipRequest": {
+            "type": "object",
+            "required": [
+                "friend-id",
+                "user-id"
+            ],
+            "properties": {
+                "friend-id": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AddCommentRequest": {
+            "type": "object",
+            "required": [
+                "body",
+                "receiver-id",
+                "user-id",
+                "whom"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string",
+                    "maxLength": 150
+                },
+                "receiver-id": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                },
+                "whom": {
+                    "type": "string",
+                    "maxLength": 6
+                }
+            }
+        },
+        "dto.AddFriendRequest": {
+            "type": "object",
+            "required": [
+                "friend-login",
+                "user-id"
+            ],
+            "properties": {
+                "friend-login": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AddGameRequest": {
+            "type": "object",
+            "required": [
+                "game",
+                "user-id"
+            ],
+            "properties": {
+                "game": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CancelFriendshipRequest": {
+            "type": "object",
+            "required": [
+                "friend-id",
+                "user-id"
+            ],
+            "properties": {
+                "friend-id": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateEventRequest": {
+            "type": "object",
+            "required": [
+                "author-id",
+                "game",
+                "max",
+                "minute"
+            ],
+            "properties": {
+                "author-id": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string",
+                    "maxLength": 150
+                },
+                "game": {
+                    "type": "string"
+                },
+                "max": {
+                    "type": "integer"
+                },
+                "minute": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.CreateNewsRequest": {
+            "type": "object"
+        },
+        "dto.DeleteGameRequest": {
+            "type": "object",
+            "required": [
+                "game",
+                "user-id"
+            ],
+            "properties": {
+                "game": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.EditRatingRequest": {
+            "type": "object",
+            "required": [
+                "stars",
+                "user-id"
+            ],
+            "properties": {
+                "stars": {
+                    "type": "integer"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.EventResponse": {
+            "type": "object",
+            "properties": {
+                "author-id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.JoinToEventRequest": {
+            "type": "object",
+            "required": [
+                "event-id",
+                "user-id"
+            ],
+            "properties": {
+                "event-id": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NewsResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RecordDiscordRequest": {
+            "type": "object",
+            "required": [
+                "discord",
+                "user-id"
+            ],
+            "properties": {
+                "discord": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "login",
+                "password",
+                "telegram"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "password": {
+                    "type": "string"
+                },
+                "telegram": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UnjoinFromEventRequest": {
+            "type": "object",
+            "required": [
+                "event-id",
+                "user-id"
+            ],
+            "properties": {
+                "event-id": {
+                    "type": "string"
+                },
+                "user-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UploadAvatarRequest": {
+            "type": "object"
+        },
+        "entities.Comment": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "comment_id": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Event": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "game": {
+                    "type": "string"
+                },
+                "max": {
+                    "type": "integer"
+                },
+                "minute": {
+                    "type": "string"
+                },
+                "notifiedPre": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "entities.Game": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "num_of_events": {
+                    "type": "integer"
+                },
+                "num_of_players": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
+                }
+            }
+        },
+        "entities.News": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "news_id": {
+                    "type": "string"
+                },
+                "picture": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Notification": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "notice_id": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.User": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "chat_id": {
+                    "type": "string"
+                },
+                "discord": {
+                    "type": "string"
+                },
+                "games": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "num_of_ratings": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "telegram": {
+                    "type": "string"
+                },
+                "total_rating": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "localhost:1111",
+	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "На жри уебок доки свои не подавись (недоделанная кстати хихиххихихих))))))",
+	Description:      "Ненавижу эту хуйню бля",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

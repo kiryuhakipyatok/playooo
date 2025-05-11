@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"crap/internal/sheduler/bot"
 	"time"
 )
 
@@ -39,6 +40,22 @@ func Run() {
 	} else {
 		logger.Info("connect to redis succefully")
 	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	defer func(){	
+		if err := postgres.Close(ctx); err != nil {
+			logger.WithError(err).Fatal("failed to close postgres")
+		} else {
+			logger.Info("close postgres success")
+		}
+		if redis != nil {
+			if err := redis.Close(); err != nil {
+				logger.WithError(err).Fatal("failed to close redis")
+			} else {
+				logger.Info("close redis success")
+			}
+		}
+	}()
 	app, err := server.CreateServer(cfg)
 	if err != nil {
 		logger.WithError(err).Fatal("failed to create server")
@@ -47,8 +64,6 @@ func Run() {
 	}
 	bcfg := bootstrap.NewBootstrapConfig(app, postgres, redis, logger, validator)
 	bcfg.BootstrapHandlers(stop, cfg)
-
-	bot:=bcfg.BootstrapBot(cfg)
 	var wg sync.WaitGroup
 	wg.Add(3)
 	go func() {
@@ -57,36 +72,29 @@ func Run() {
 			logger.WithError(err).Fatal("failed to start server")
 		}
 	}()
+	botChan := make(chan *bot.Bot)
 	go func(){
 		defer wg.Done()
-		bot.ListenForUpdates(stop)
+		bot,err:=bootstrap.StartBot(cfg,postgres,redis,logger,stop)
+		if err!=nil{
+			logger.WithError(err).Info("failed to create bot")
+			return
+		}
+		logger.Info("bot created successfully")
+		botChan <- bot
+		close(botChan)
 	}()
 	go func(){
 		defer wg.Done()
-		bcfg.BootstrapSheduler(stop,bot)
+		bcfg.BootstrapSheduler(stop,<-botChan)
 	}()
 	<-quit
-	
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctxS, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := postgres.Close(ctx); err != nil {
-		logger.WithError(err).Fatal("failed to close postgres")
-	} else {
-		logger.Info("close postgres success")
-	}
-	if redis != nil {
-		if err := redis.Close(); err != nil {
-			logger.WithError(err).Fatal("failed to close redis")
-		} else {
-			logger.Info("close redis success")
-		}
-	}
-	if err := app.ShutdownWithContext(ctx); err != nil {
+	if err := app.ShutdownWithContext(ctxS); err != nil {
 		logger.WithError(err).Fatal("server forced to shutdown")
-	} else {
-		logger.Info("server stopped successfuly")
 	}
 	close(stop)
 	wg.Wait()
-	logger.Info("app stoped")
+	logger.Info("server stopped successfuly")
 }

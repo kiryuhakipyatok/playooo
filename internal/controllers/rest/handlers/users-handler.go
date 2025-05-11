@@ -27,6 +27,19 @@ func NewUsersHandler(us services.UserService, l *logrus.Logger, v *validator.Val
 	}
 }
 
+// GetUser godoc
+// @Summary Get user by ID
+// @Description Get detailed information about specific user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path string true "User ID"
+// @Success 200 {object} entities.User
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /users/{id} [get]
 func(uh *UsersHandler) GetUser(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -45,6 +58,19 @@ func(uh *UsersHandler) GetUser(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
+// GetUsers godoc
+// @Summary Get users list
+// @Description Get paginated list of users
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request query dto.PaginationRequest true "Pagination parameters"
+// @Success 200 {array} entities.User "List of users"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /users [get]
 func(uh *UsersHandler) GetUsers(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -69,6 +95,19 @@ func(uh *UsersHandler) GetUsers(c *fiber.Ctx) error{
 	return c.JSON(users)
 }
 
+// UploadAvatar godoc
+// @Summary Upload user avatar
+// @Description Upload or update user avatar image
+// @Tags users
+// @Accept multipart/form-data
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.UploadAvatarRequest true "Avatar upload data"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /users/avatar [post]
 func(uh *UsersHandler) UploadAvatar(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -94,6 +133,19 @@ func(uh *UsersHandler) UploadAvatar(c *fiber.Ctx) error{
 	})
 }
 
+// RecordDiscord godoc
+// @Summary Record Discord association
+// @Description Link user account with Discord
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.RecordDiscordRequest true "Discord association data"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /users/discord [post]
 func(uh *UsersHandler) RecordDiscord(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -119,6 +171,19 @@ func(uh *UsersHandler) RecordDiscord(c *fiber.Ctx) error{
 	})
 }
 
+// DeleteAvatar godoc
+// @Summary Delete user avatar
+// @Description Remove user's avatar image
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path string true "User ID"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /users/avatar/{id} [delete]
 func(uh *UsersHandler) DeleteAvatar(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -138,6 +203,19 @@ func(uh *UsersHandler) DeleteAvatar(c *fiber.Ctx) error{
 	})
 }
 
+// EditRating godoc
+// @Summary Edit user rating
+// @Description Update user's rating value
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.EditRatingRequest true "Rating edit data"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /users/rating [patch]
 func(uh *UsersHandler) EditRating(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()

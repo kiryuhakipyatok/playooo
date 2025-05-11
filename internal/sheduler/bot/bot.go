@@ -19,14 +19,20 @@ type Bot struct {
 	EventRepository	repositories.EventRepository
 }
 
-func CreateBot(l *logrus.Logger, userRepository repositories.UserRepository, eventRepository repositories.EventRepository, token string) *Bot {
+func CreateBot(stop chan struct{}, l *logrus.Logger, userRepository repositories.UserRepository, eventRepository repositories.EventRepository, token string) (*Bot,error) {
 	var err error
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
-		return nil
+		return nil,err
 	}
 	Bot := Bot{bot: bot, UserRepository: userRepository,EventRepository: eventRepository, Logger: l}
-	return &Bot
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		Bot.listenForUpdates(stop)
+	}()
+	return &Bot,err
 }
 
 func (b *Bot) SendMsg(event entities.Event, msg string) error {
@@ -52,7 +58,7 @@ func (b *Bot) SendMsg(event entities.Event, msg string) error {
 	return nil
 }
 
-func (b *Bot) ListenForUpdates(stop chan struct{}) {
+func (b *Bot) listenForUpdates(stop chan struct{}) {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 	updates := b.bot.GetUpdatesChan(updateConfig)

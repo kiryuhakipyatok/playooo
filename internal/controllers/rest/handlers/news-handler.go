@@ -26,6 +26,18 @@ func NewNewsHandler(fs services.NewsService, l *logrus.Logger, v *validator.Vali
 	}
 }
 
+// CreateNews godoc
+// @Summary Create news article
+// @Description Create a new news article
+// @Tags news
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateNewsRequest true "News creation data"
+// @Success 200 {object} dto.NewsResponse "News data"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /news [post]
 func(nh *NewsHandler) CreateNews(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -54,24 +66,19 @@ func(nh *NewsHandler) CreateNews(c *fiber.Ctx) error {
 	return c.JSON(responce)
 }
 
-func(nh *NewsHandler) GetById(c *fiber.Ctx) error{
-	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
-	defer cancel()
-	eH := errh.NewErrorHander(c, nh.Logger, "get-news")
-	id:=c.Query("id")
-	news,err:=nh.NewsService.GetById(ctx,id)
-	if err!=nil{
-		if errors.Is(err, context.DeadlineExceeded) {
-			return errh.RequestTimedOut(eH, err)
-		}
-		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{
-			"error":"failed to get news: "+ err.Error(),
-		})
-	}
-	return c.JSON(news)
-}
-
+// GetNews godoc
+// @Summary Get news by ID (path)
+// @Description Get news article by its ID (passed as path parameter)
+// @Tags news
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path string true "News ID"
+// @Success 200 {object} entities.News "News data"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /news/{id} [get]
 func(nh *NewsHandler) GetNews(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
@@ -90,6 +97,18 @@ func(nh *NewsHandler) GetNews(c *fiber.Ctx) error{
 	return c.JSON(news)
 }
 
+// GetSomeNews godoc
+// @Summary Get paginated news
+// @Description Get paginated list of news articles
+// @Tags news
+// @Accept json
+// @Produce json
+// @Param request query dto.PaginationRequest true "Pagination parameters"
+// @Success 200 {array} entities.News "List of news"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /news [get]
 func(nh *NewsHandler) GetSomeNews(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()

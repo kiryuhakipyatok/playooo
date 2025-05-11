@@ -29,6 +29,18 @@ func NewAuthHandler(as services.AuthService, l *logrus.Logger, v *validator.Vali
 	}
 }
 
+// Register godoc
+// @Summary User registration
+// @Description Creates a new user in the system
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body dto.RegisterRequest true "Registration data"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /auth/register [post]
 func(ah *AuthHandler) Register(c *fiber.Ctx) error{
 	ctx,cancel:=context.WithTimeout(c.Context(),time.Second*5)
 	defer cancel()
@@ -58,6 +70,18 @@ func(ah *AuthHandler) Register(c *fiber.Ctx) error{
 	return c.JSON(response)
 }
 
+// Login godoc
+// @Summary User authentication
+// @Description User login and receiving JWT token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body dto.LoginRequest true "Login data"
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /auth/login [post]
 func (ah *AuthHandler) Login(c *fiber.Ctx) error{
 	ctx,cancel:=context.WithTimeout(c.Context(),time.Second*5)
 	defer cancel()
@@ -92,6 +116,17 @@ func (ah *AuthHandler) Login(c *fiber.Ctx) error{
 	})
 }
 
+// Logout godoc
+// @Summary Logout
+// @Description Clears the JWT cookie
+// @Tags auth
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /auth/logout [post]
 func(ah *AuthHandler) Logout(c *fiber.Ctx) error{
 	jwt:=fiber.Cookie{
 		Name:     "jwt",
@@ -106,6 +141,17 @@ func(ah *AuthHandler) Logout(c *fiber.Ctx) error{
 	})
 }
 
+// Profile godoc
+// @Summary Getting a logged in profile
+// @Description Returns the profile data of the current user
+// @Tags auth
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /auth/profile [get]
 func(ah *AuthHandler) Profile(c *fiber.Ctx) error{
 	ctx,cancel:=context.WithTimeout(c.Context(),time.Second*5)
 	defer cancel()

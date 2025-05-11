@@ -1,4 +1,1460 @@
+basePath: /api
+definitions:
+  dto.AcceptFriendshipRequest:
+    properties:
+      friend-id:
+        type: string
+      user-id:
+        type: string
+    required:
+    - friend-id
+    - user-id
+    type: object
+  dto.AddCommentRequest:
+    properties:
+      body:
+        maxLength: 150
+        type: string
+      receiver-id:
+        type: string
+      user-id:
+        type: string
+      whom:
+        maxLength: 6
+        type: string
+    required:
+    - body
+    - receiver-id
+    - user-id
+    - whom
+    type: object
+  dto.AddFriendRequest:
+    properties:
+      friend-login:
+        type: string
+      user-id:
+        type: string
+    required:
+    - friend-login
+    - user-id
+    type: object
+  dto.AddGameRequest:
+    properties:
+      game:
+        type: string
+      user-id:
+        type: string
+    required:
+    - game
+    - user-id
+    type: object
+  dto.CancelFriendshipRequest:
+    properties:
+      friend-id:
+        type: string
+      user-id:
+        type: string
+    required:
+    - friend-id
+    - user-id
+    type: object
+  dto.CreateEventRequest:
+    properties:
+      author-id:
+        type: string
+      body:
+        maxLength: 150
+        type: string
+      game:
+        type: string
+      max:
+        type: integer
+      minute:
+        type: integer
+    required:
+    - author-id
+    - game
+    - max
+    - minute
+    type: object
+  dto.CreateNewsRequest:
+    type: object
+  dto.DeleteGameRequest:
+    properties:
+      game:
+        type: string
+      user-id:
+        type: string
+    required:
+    - game
+    - user-id
+    type: object
+  dto.EditRatingRequest:
+    properties:
+      stars:
+        type: integer
+      user-id:
+        type: string
+    required:
+    - stars
+    - user-id
+    type: object
+  dto.EventResponse:
+    properties:
+      author-id:
+        type: string
+      id:
+        type: string
+      time:
+        type: string
+    type: object
+  dto.JoinToEventRequest:
+    properties:
+      event-id:
+        type: string
+      user-id:
+        type: string
+    required:
+    - event-id
+    - user-id
+    type: object
+  dto.LoginRequest:
+    properties:
+      login:
+        maxLength: 100
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  dto.NewsResponse:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.RecordDiscordRequest:
+    properties:
+      discord:
+        type: string
+      user-id:
+        type: string
+    required:
+    - discord
+    - user-id
+    type: object
+  dto.RegisterRequest:
+    properties:
+      login:
+        maxLength: 100
+        type: string
+      password:
+        type: string
+      telegram:
+        type: string
+    required:
+    - login
+    - password
+    - telegram
+    type: object
+  dto.UnjoinFromEventRequest:
+    properties:
+      event-id:
+        type: string
+      user-id:
+        type: string
+    required:
+    - event-id
+    - user-id
+    type: object
+  dto.UploadAvatarRequest:
+    type: object
+  entities.Comment:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      comment_id:
+        type: string
+      time:
+        type: string
+    type: object
+  entities.Event:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      event_id:
+        type: string
+      game:
+        type: string
+      max:
+        type: integer
+      minute:
+        type: string
+      notifiedPre:
+        type: boolean
+    type: object
+  entities.Game:
+    properties:
+      name:
+        type: string
+      num_of_events:
+        type: integer
+      num_of_players:
+        type: integer
+      rating:
+        type: number
+    type: object
+  entities.News:
+    properties:
+      body:
+        type: string
+      link:
+        type: string
+      news_id:
+        type: string
+      picture:
+        type: string
+      time:
+        type: string
+      title:
+        type: string
+    type: object
+  entities.Notification:
+    properties:
+      body:
+        type: string
+      event_id:
+        type: string
+      notice_id:
+        type: string
+      time:
+        type: string
+      user_id:
+        type: string
+    type: object
+  entities.User:
+    properties:
+      avatar:
+        type: string
+      chat_id:
+        type: string
+      discord:
+        type: string
+      games:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      login:
+        type: string
+      num_of_ratings:
+        type: integer
+      rating:
+        type: number
+      telegram:
+        type: string
+      total_rating:
+        type: integer
+    type: object
+host: localhost:1111
 info:
   contact: {}
-paths: {}
+  description: Ненавижу эту хуйню бля
+  title: На жри уебок доки свои не подавись (недоделанная кстати хихиххихихих))))))
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: User login and receiving JWT token
+      parameters:
+      - description: Login data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: User authentication
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      description: Clears the JWT cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Logout
+      tags:
+      - auth
+  /auth/profile:
+    get:
+      description: Returns the profile data of the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Getting a logged in profile
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the system
+      parameters:
+      - description: Registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: User registration
+      tags:
+      - auth
+  /comments:
+    get:
+      description: Returns a list of comments by parameters
+      parameters:
+      - description: whose
+        in: query
+        name: whose
+        type: string
+      - description: user ID
+        in: query
+        name: userId
+        type: string
+      - description: news ID
+        in: query
+        name: newsId
+        type: string
+      - description: amount
+        in: query
+        name: amount
+        type: integer
+      - description: page
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of comments
+          schema:
+            items:
+              $ref: '#/definitions/entities.Comment'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: Receiving comments
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      description: Creates a new comment
+      parameters:
+      - description: Comment data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Comment'
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Adding a comment
+      tags:
+      - comments
+  /events:
+    get:
+      description: Returns a list of events with pagination
+      parameters:
+      - description: amount
+        in: query
+        name: amount
+        type: integer
+      - description: page
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Event'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: Getting a list of events
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Creates a new event
+      parameters:
+      - description: Event data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EventResponse'
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create an event
+      tags:
+      - events
+  /events/{id}:
+    delete:
+      description: Deletes an event by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Deleting an event
+      tags:
+      - events
+    get:
+      description: Returns an event by its id
+      parameters:
+      - description: event Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Event'
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: Getting event by ID
+      tags:
+      - events
+  /events/join:
+    post:
+      consumes:
+      - application/json
+      description: Adds a user to the event participants
+      parameters:
+      - description: Data for join to event
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.JoinToEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Joining the event
+      tags:
+      - events
+  /events/unjoin:
+    post:
+      consumes:
+      - application/json
+      description: Removes a user from the event participants
+      parameters:
+      - description: Data for unjoin from event
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UnjoinFromEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Exit event
+      tags:
+      - events
+  /friends:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the list of friends for a user
+      parameters:
+      - in: query
+        name: amount
+        required: true
+        type: integer
+      - in: query
+        name: page
+        required: true
+        type: integer
+      - in: query
+        name: user-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of friends
+          schema:
+            items:
+              $ref: '#/definitions/entities.User'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get user's friends list
+      tags:
+      - friends
+  /friends/accept:
+    post:
+      consumes:
+      - application/json
+      description: Accept a pending friend request from another user
+      parameters:
+      - description: Accept Friendship Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AcceptFriendshipRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: Accept a friend request
+      tags:
+      - friends
+  /friends/add:
+    post:
+      consumes:
+      - application/json
+      description: Send a friend request to another user
+      parameters:
+      - description: Add Friend Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddFriendRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Add a new friend
+      tags:
+      - friends
+  /friends/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Remove a friend or cancel a pending friend request
+      parameters:
+      - description: Cancel Friendship Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CancelFriendshipRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Cancel a friendship
+      tags:
+      - friends
+  /friends/requests:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve pending friend requests for a user
+      parameters:
+      - in: query
+        name: amount
+        required: true
+        type: integer
+      - in: query
+        name: page
+        required: true
+        type: integer
+      - in: query
+        name: user-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of friend requests
+          schema:
+            items:
+              $ref: '#/definitions/entities.User'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: Get friend requests
+      tags:
+      - friends
+  /games:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a game from user's collection
+      parameters:
+      - description: Delete Game Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DeleteGameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a game from user
+      tags:
+      - games
+    get:
+      consumes:
+      - application/json
+      description: Retrieve paginated list of user's games
+      parameters:
+      - in: query
+        name: amount
+        required: true
+        type: integer
+      - in: query
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of games
+          schema:
+            items:
+              $ref: '#/definitions/entities.Game'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get user's games
+      tags:
+      - games
+    post:
+      consumes:
+      - application/json
+      description: Add a game to user's collection
+      parameters:
+      - description: Add Game Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddGameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Add a game to user
+      tags:
+      - games
+  /games/{game}:
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about specific game
+      parameters:
+      - description: Game title
+        in: path
+        name: game
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Game data
+          schema:
+            $ref: '#/definitions/entities.Game'
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get game details
+      tags:
+      - games
+  /news:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of news articles
+      parameters:
+      - in: query
+        name: amount
+        required: true
+        type: integer
+      - in: query
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of news
+          schema:
+            items:
+              $ref: '#/definitions/entities.News'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: Get paginated news
+      tags:
+      - news
+    post:
+      consumes:
+      - application/json
+      description: Create a new news article
+      parameters:
+      - description: News creation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateNewsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: News data
+          schema:
+            $ref: '#/definitions/dto.NewsResponse'
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      summary: Create news article
+      tags:
+      - news
+  /news/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get news article by its ID (passed as path parameter)
+      parameters:
+      - description: News ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: News data
+          schema:
+            $ref: '#/definitions/entities.News'
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get news by ID (path)
+      tags:
+      - news
+  /notifications:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of notifications
+      parameters:
+      - in: query
+        name: amount
+        required: true
+        type: integer
+      - in: query
+        name: page
+        required: true
+        type: integer
+      - in: query
+        name: user-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of notifications
+          schema:
+            items:
+              $ref: '#/definitions/entities.Notification'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get notifications
+      tags:
+      - notifications
+  /notifications/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete specific notification by ID
+      parameters:
+      - description: Notification ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete notification
+      tags:
+      - notifications
+  /notifications/all/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete all notifications for user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete all notifications
+      tags:
+      - notifications
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get paginated list of users
+      parameters:
+      - in: query
+        name: amount
+        required: true
+        type: integer
+      - in: query
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            items:
+              $ref: '#/definitions/entities.User'
+            type: array
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get users list
+      tags:
+      - users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.User'
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get user by ID
+      tags:
+      - users
+  /users/avatar:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload or update user avatar image
+      parameters:
+      - description: Avatar upload data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UploadAvatarRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Upload user avatar
+      tags:
+      - users
+  /users/avatar/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove user's avatar image
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete user avatar
+      tags:
+      - users
+  /users/discord:
+    post:
+      consumes:
+      - application/json
+      description: Link user account with Discord
+      parameters:
+      - description: Discord association data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RecordDiscordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Record Discord association
+      tags:
+      - users
+  /users/rating:
+    patch:
+      consumes:
+      - application/json
+      description: Update user's rating value
+      parameters:
+      - description: Rating edit data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EditRatingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{\"message\":\"string\"}'
+          schema:
+            type: object
+        "400":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "408":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+        "500":
+          description: '{\"error\":\"string\"}'
+          schema:
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Edit user rating
+      tags:
+      - users
 swagger: "2.0"

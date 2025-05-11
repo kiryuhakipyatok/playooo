@@ -102,9 +102,9 @@ func(bcfg *BootstrapConfig) BootstrapSheduler(stop chan struct{}, bot *bot.Bot){
 	sheduler.SetupSheduler(stop)
 }
 
-func(bcfg *BootstrapConfig) BootstrapBot(cfg config.Config) *bot.Bot{
-	userRepository := repositories.NewUserRepository(bcfg.Postgres, bcfg.Redis)
-	eventRepository := repositories.NewEventRepository(bcfg.Postgres, bcfg.Redis)
-	bot:=bot.CreateBot(bcfg.Logger,userRepository,eventRepository,cfg.Bot.Token)
-	return bot
-}
+// func(bcfg *BootstrapConfig) BootstrapBot(cfg config.Config) *bot.Bot{
+// 	userRepository := repositories.NewUserRepository(bcfg.Postgres, bcfg.Redis)
+// 	eventRepository := repositories.NewEventRepository(bcfg.Postgres, bcfg.Redis)
+// 	bot:=bot.CreateBot(bcfg.Logger,userRepository,eventRepository,cfg.Bot.Token)
+// 	return bot
+// }
