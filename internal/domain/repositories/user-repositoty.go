@@ -3,11 +3,13 @@ package repositories
 import (
 	"context"
 	"crap/internal/domain/entities"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"time"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/redis/go-redis/v9"
-	"encoding/json"
-	"time"
-	"fmt"
 )
 
 type UserRepository interface{
@@ -65,6 +67,9 @@ func (ur *userRepository) Save(ctx context.Context, user entities.User) error {
 func (ur *userRepository) ExistByLoginOrTg(ctx context.Context, login, tg string) (bool,error) {
 	var id string
 	if err:=ur.DB.QueryRow(ctx,"SELECT id FROM users where login = $1 OR telegram = $2",login,tg).Scan(&id);err!=nil{
+		if errors.Is(err, pgx.ErrNoRows){
+			return false,nil
+		}
 		return false,err
 	}
 	return true,nil
