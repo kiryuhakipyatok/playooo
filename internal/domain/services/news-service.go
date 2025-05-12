@@ -24,13 +24,14 @@ type NewsService interface {
 type newsService struct {
 	NewsRepository    repositories.NewsRepository
 	Transactor repositories.Transactor
-	Config config.Config
+	Config *config.Config
 }
 
-func NewNewsService(nr repositories.NewsRepository, t repositories.Transactor) NewsService {
+func NewNewsService(nr repositories.NewsRepository, t repositories.Transactor, cfg *config.Config) NewsService {
 	return &newsService{
 		NewsRepository: nr,
 		Transactor: t,
+		Config: cfg,
 	}
 }
 

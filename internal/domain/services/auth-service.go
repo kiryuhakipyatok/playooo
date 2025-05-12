@@ -23,12 +23,13 @@ type AuthService interface {
 
 type authService struct {
 	UserRepository repositories.UserRepository
-	Config config.Config
+	Config *config.Config
 }
 
-func NewAuthService(userRepository repositories.UserRepository) AuthService {
+func NewAuthService(userRepository repositories.UserRepository, cfg *config.Config) AuthService {
 	return &authService{
 		UserRepository: userRepository,
+		Config: cfg,
 	}
 }
 

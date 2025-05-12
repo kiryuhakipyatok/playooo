@@ -27,13 +27,14 @@ type UserService interface {
 type userService struct {
 	UserRepository repositories.UserRepository
 	Transactor     repositories.Transactor
-	Config config.Config
+	Config *config.Config
 }
 
-func NewUserService(ur repositories.UserRepository, t repositories.Transactor) UserService {
+func NewUserService(ur repositories.UserRepository, t repositories.Transactor, cfg *config.Config) UserService {
 	return &userService{
 		UserRepository: ur,
 		Transactor:     t,
+		Config: cfg,
 	}
 }
 
