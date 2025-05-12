@@ -7,6 +7,7 @@ import (
 	"crap/internal/domain/repositories"
 	"crap/internal/dto"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -52,6 +53,7 @@ func (as *authService) Register(ctx context.Context,req dto.RegisterRequest) (*e
 	if err := as.UserRepository.Create(ctx, user); err != nil {
 		return nil, err
 	}
+	fmt.Println(user)
 	return &user, nil
 }
 
