@@ -50,11 +50,11 @@ func(bcfg *BootstrapConfig) BootstrapHandlers(stop chan struct{}, cfg *config.Co
 	notificationRepository := repositories.NewNoticeRepository(bcfg.Postgres)
 	friendshipsRepository:=repositories.NewFriendshipsRepository(bcfg.Postgres)
 
-	userService := services.NewUserService(userRepository, transactor)
-	authService := services.NewAuthService(userRepository)
+	userService := services.NewUserService(userRepository, transactor,cfg)
+	authService := services.NewAuthService(userRepository,cfg)
 	gameService := services.NewGameService(gameRepository, userRepository, transactor)
 	eventService := services.NewEventService(eventRepository, userRepository, gameRepository, transactor)
-	newsService := services.NewNewsService(newsRepository, transactor)
+	newsService := services.NewNewsService(newsRepository, transactor,cfg)
 	notificationService := services.NewNotificationService(notificationRepository, eventRepository, userRepository, transactor)
 	commentService := services.NewCommentService(commentRepository, userRepository, eventRepository, newsRepository, transactor)
 	friendshipsService :=services.NewFriendshipsService(friendshipsRepository,userRepository)
@@ -83,10 +83,10 @@ func(bcfg *BootstrapConfig) BootstrapHandlers(stop chan struct{}, cfg *config.Co
 	routConfig.Setup()
 }
 
-func(bcfg *BootstrapConfig) BootstrapSheduler(stop chan struct{}, bot *bot.Bot) sheduler.Sheduler{
+func(bcfg *BootstrapConfig) BootstrapSheduler(stop chan struct{}, bot *bot.Bot, cfg *config.Config) sheduler.Sheduler{
 	transactor := repositories.NewTransactor(bcfg.Postgres)
 	userRepository := repositories.NewUserRepository(bcfg.Postgres, bcfg.Redis)
-	userService := services.NewUserService(userRepository, transactor)
+	userService := services.NewUserService(userRepository, transactor,cfg)
 	eventRepository := repositories.NewEventRepository(bcfg.Postgres, bcfg.Redis)
 	gameRepository := repositories.NewGameRepository(bcfg.Postgres)
 	eventService := services.NewEventService(eventRepository, userRepository, gameRepository, transactor)
