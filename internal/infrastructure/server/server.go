@@ -20,8 +20,8 @@ func CreateServer(cfg config.Config) (*fiber.App,error){
 		AllowCredentials: false,
 	}),func (c *fiber.Ctx) error {
 		excludedPaths := map[string]bool{
-            "/api/register": true,
-            "/api/login":    true,
+            "/api/auth/register": true,
+            "/api/auth/login":    true,
         }
 
         if excludedPaths[c.Path()] {
