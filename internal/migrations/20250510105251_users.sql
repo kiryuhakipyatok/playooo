@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE users(
-    id UUID PRIMARY KEY NOT NULL,
+    id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     login VARCHAR(45) UNIQUE NOT NULL,
     telegram VARCHAR(45) UNIQUE NOT NULL,
     chat_id VARCHAR(45) UNIQUE DEFAULT 'unknown',

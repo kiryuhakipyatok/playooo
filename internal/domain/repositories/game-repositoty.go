@@ -31,7 +31,7 @@ func (gr *gameRepository) Save(ctx context.Context, game entities.Game) error{
 
 func (gr *gameRepository) FindByName(ctx context.Context, name string) (*entities.Game, error){
 	game:=entities.Game{}
-	if err:=gr.DB.QueryRow(ctx,"SELECT * FROM games WHERE name = $1",name).Scan(&game.Name,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
+	if err:=gr.DB.QueryRow(ctx,"SELECT * FROM games WHERE name = $1",name).Scan(&game.Id,&game.Name,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
 		return nil,err
 	}
 	return &game, nil

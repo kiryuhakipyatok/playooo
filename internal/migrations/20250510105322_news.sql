@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE news(
-    id UUID PRIMARY KEY NOT NULL,
+    id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     title VARCHAR(45) NOT NULL,
     body TEXT NOT NULL,
     time TIMESTAMPTZ NOT NULL,
