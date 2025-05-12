@@ -2,8 +2,8 @@
 -- +goose StatementBegin
 CREATE TABLE notifications(
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users (id),
-    event_id UUID REFERENCES events (id),
+    user_id UUID NOT NULL,
+    event_id UUID NOT NULL UNIQUE,
     body TEXT NOT NULL
 )
 -- +goose StatementEnd
