@@ -50,12 +50,12 @@ type AuthCfg struct{
 
 
 func LoadConfig() (*Config, error) {
-	cfg := &Config{}
+	cfg := Config{}
 	if err := env.Parse(cfg); err != nil {
 		return nil, err
 	}
 
-	return cfg, nil
+	return &cfg, nil
 }
 // func LoadConfig(filename string) (Config,error){
 // 	v:=viper.New()
