@@ -7,7 +7,7 @@ CREATE TABLE users(
     chat_id VARCHAR(45) UNIQUE DEFAULT 'unknown',
     rating NUMERIC DEFAULT 0,
     total_rating INT DEFAULT 0,
-    number_of_rating INT DEFAULT 0,
+    number_of_ratings INT DEFAULT 0,
     game text[],
     password BYTEA NOT NULL,
     avatar TEXT DEFAULT 'absent',

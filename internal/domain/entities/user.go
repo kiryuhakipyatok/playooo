@@ -11,7 +11,7 @@ type User struct {
 	ChatId          string         `json:"chat_id"`
 	Rating          float64        `json:"rating"`
 	TotalRating     int            `json:"total_rating"`
-	NumberOfRatings int            `json:"num_of_ratings"`
+	NumberOfRatings int            `json:"number_of_ratings"`
 	Games           []string 	`json:"games"`
 	Password        []byte	       `json:"-"`
 	Avatar          string		`json:"avatar"`
