@@ -34,7 +34,7 @@ func NewEventRepository(db *pgx.Conn, redis *redis.Client) EventRepository {
 }
 
 func (er *eventRepository) Create(ctx context.Context, event entities.Event) error {
-	if _,err := er.DB.Exec(ctx, "INSERT INTO events (id,author_id,body,game,max,time,notified_pre) values($1,$2,$3,$4,$5,$6,$7)", event.Id, event.AuthorId, event.Body, event.Game, event.Max, event.Time, event.NotifiedPre); err != nil {
+	if _,err := er.DB.Exec(ctx, "INSERT INTO events (id,author_id,body,game,max,time,notified_pre) values($1,$2,$3,$4,$5,$6,$7)", event.Id, event.AuthorId, event.Body, event.Game, event.Max, event.Time, event.NotificatedPre); err != nil {
 		return err
 	}
 	if _,err:=er.DB.Exec(ctx,"INSERT INTO users_events (event_id,user_id) values($1,$2)",event.Id,event.AuthorId);err!=nil{
@@ -53,7 +53,7 @@ func (er *eventRepository) Create(ctx context.Context, event entities.Event) err
 }
 
 func (er *eventRepository) Save(ctx context.Context, event entities.Event) error {
-	if _,err := er.DB.Exec(ctx, "UPDATE events SET author_id=$1,body=$2,game=$3,max=$4,time=$5,notified_pre=$6 WHERE id = $7", event.Body, event.Game, event.Max, event.Time, event.NotifiedPre,event.Id); err != nil {
+	if _,err := er.DB.Exec(ctx, "UPDATE events SET author_id=$1,body=$2,game=$3,max=$4,time=$5,notified_pre=$6 WHERE id = $7", event.Body, event.Game, event.Max, event.Time, event.NotificatedPre,event.Id); err != nil {
 		return err
 	}
 	if er.Redis != nil {
@@ -91,7 +91,7 @@ func (er *eventRepository) FetchUpcoming(ctx context.Context, time time.Time) ([
 	defer rows.Close()
 	for rows.Next(){
 		event:=entities.Event{}
-		if err:=rows.Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotifiedPre);err!=nil{
+		if err:=rows.Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotificatedPre);err!=nil{
 			return nil,err
 		}
 		events=append(events, event)
@@ -105,7 +105,7 @@ func (er *eventRepository) FindById(ctx context.Context, id string) (*entities.E
 		eventdata, err := er.Redis.Get(ctx, id).Result()
 		if err != nil {
 			if err == redis.Nil {
-				if err:=er.DB.QueryRow(ctx,"SELECT * FROM events where id= $1",id).Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotifiedPre);err!=nil{
+				if err:=er.DB.QueryRow(ctx,"SELECT * FROM events where id= $1",id).Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotificatedPre);err!=nil{
 					return nil,err
 				}
 				eventdata, err := json.Marshal(event)
@@ -116,7 +116,7 @@ func (er *eventRepository) FindById(ctx context.Context, id string) (*entities.E
 					return nil, err
 				}
 			} else {
-				if err:=er.DB.QueryRow(ctx,"SELECT * FROM events where id= $1",id).Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotifiedPre);err!=nil{
+				if err:=er.DB.QueryRow(ctx,"SELECT * FROM events where id= $1",id).Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotificatedPre);err!=nil{
 					return nil,err
 				}
 			}
@@ -126,7 +126,7 @@ func (er *eventRepository) FindById(ctx context.Context, id string) (*entities.E
 			}
 		}
 	} else {
-		if err:=er.DB.QueryRow(ctx,"SELECT * FROM events where id= $1",id).Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotifiedPre);err!=nil{
+		if err:=er.DB.QueryRow(ctx,"SELECT * FROM events where id= $1",id).Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotificatedPre);err!=nil{
 			return nil,err
 		}
 	}
@@ -143,7 +143,7 @@ func (er *eventRepository) Fetch(ctx context.Context, amount, page int) ([]entit
 	defer rows.Close()
 	for rows.Next(){
 		event:=entities.Event{}
-		if err:=rows.Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotifiedPre);err!=nil{
+		if err:=rows.Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotificatedPre);err!=nil{
 			return nil,err
 		}
 		events=append(events, event)

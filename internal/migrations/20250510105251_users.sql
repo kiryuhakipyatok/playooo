@@ -8,7 +8,7 @@ CREATE TABLE users(
     rating NUMERIC DEFAULT 0,
     total_rating INT DEFAULT 0,
     number_of_ratings INT DEFAULT 0,
-    game text[],
+    games text[],
     password BYTEA NOT NULL,
     avatar TEXT DEFAULT 'absent',
     discord VARCHAR(45) UNIQUE DEFAULT 'unknown'

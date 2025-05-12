@@ -65,7 +65,7 @@ func (es *eventService)	CreateEvent(ctx context.Context, req dto.CreateEventRequ
 			Time: time.Now().Add(time.Minute*time.Duration(req.Minute)),
 		}
 		if req.Minute <= 10 {
-			event.NotifiedPre = true
+			event.NotificatedPre = true
 		}
 		if err:=es.EventRepository.Create(c,event);err!=nil{
 			return nil,err

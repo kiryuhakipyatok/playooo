@@ -38,7 +38,7 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 					s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
 				}
 				for _, event := range upcoming {
-					if !event.NotifiedPre {
+					if !event.NotificatedPre {
 					premsg := "cобытие " + event.Body + " начнется через 10 минут!"
 					s.NotificationService.CreateNotification(ctx, event, premsg)
 					if s.Bot!=nil{
@@ -47,7 +47,7 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 						}	
 					}
 					s.Logger.Infof("уведомление о предстоящем событии %v отправлено в %v", event.Body, time.Now())
-					event.NotifiedPre = true
+					event.NotificatedPre = true
 					if err := s.EventService.Save(context.Background(), event); err != nil {
 						s.Logger.WithError(err).Errorf("failed to save event: %v", err)
 					}

@@ -12,5 +12,5 @@ type Event struct {
 	Game        string         `json:"game"`
 	Max         int            `json:"max"`
 	Time        time.Time      `json:"minute"`
-	NotifiedPre bool
+	NotificatedPre bool		`json:"notificated_pre"`
 }
