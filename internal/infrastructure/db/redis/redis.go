@@ -13,7 +13,7 @@ import (
 
 
 
-func Connect(cfg config.Config) (*redis.Client,error){
+func Connect(cfg *config.Config) (*redis.Client,error){
 	addr:=fmt.Sprintf("%s:%s",cfg.Redis.Host,cfg.Redis.Port)
 	client:=redis.NewClient(&redis.Options{
 		Addr: addr,

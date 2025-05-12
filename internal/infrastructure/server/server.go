@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-func CreateServer(cfg config.Config) (*fiber.App,error){
+func CreateServer(cfg *config.Config) (*fiber.App,error){
 	app:=fiber.New()
 	app.Get("/swagger/*", swagger.HandlerDefault)
 	app.Static("files", "../../files")

@@ -38,7 +38,7 @@ func NewBootstrapConfig(a *fiber.App,p *pgx.Conn, r *redis.Client, l *logrus.Log
 	}
 }
 
-func(bcfg *BootstrapConfig) BootstrapHandlers(stop chan struct{}, cfg config.Config) {
+func(bcfg *BootstrapConfig) BootstrapHandlers(stop chan struct{}, cfg *config.Config) {
 
 	transactor := repositories.NewTransactor(bcfg.Postgres)
 
@@ -102,7 +102,7 @@ func(bcfg *BootstrapConfig) BootstrapSheduler(stop chan struct{}, bot *bot.Bot) 
 	return sheduler
 }
 
-func(bcfg *BootstrapConfig) BootstrapBot(stop chan struct{}, cfg config.Config) (*bot.Bot,error){
+func(bcfg *BootstrapConfig) BootstrapBot(stop chan struct{}, cfg *config.Config) (*bot.Bot,error){
 	userRepository := repositories.NewUserRepository(bcfg.Postgres, bcfg.Redis)
 	eventRepository := repositories.NewEventRepository(bcfg.Postgres, bcfg.Redis)
 	bot, err := bot.CreateBot(stop,bcfg.Logger, userRepository, eventRepository,cfg.Bot.Token)
