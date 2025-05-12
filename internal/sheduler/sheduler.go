@@ -2,7 +2,6 @@ package sheduler
 
 import (
 	"context"
-	"fmt"
 	"crap/internal/sheduler/bot"
 	"crap/internal/domain/services"
 	"time"
@@ -31,16 +30,16 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 				s.Logger.Info("stopping sheduler")
 			default:
 				now := time.Now()
-				ctx,cancel:=context.WithTimeout(context.Background(),time.Second*5)
+				ctx1,cancel:=context.WithTimeout(context.Background(),time.Second*5)
 				defer cancel()
-				upcoming, err := s.EventService.FindUpcoming(ctx, now.Add(10*time.Minute).Add(30*time.Second))
+				upcoming, err := s.EventService.FindUpcoming(ctx1, now.Add(10*time.Minute).Add(30*time.Second))
 				if err != nil {
 					s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
 				}
 				for _, event := range upcoming {
 					if !event.NotificatedPre {
 					premsg := "cобытие " + event.Body + " начнется через 10 минут!"
-					s.NotificationService.CreateNotification(ctx, event, premsg)
+					s.NotificationService.CreateNotification(ctx1, event, premsg)
 					if s.Bot!=nil{
 						if err := s.Bot.SendMsg(event, premsg); err != nil {
 							s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
@@ -53,14 +52,15 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 					}
 					}	
 				}
-				current, err := s.EventService.FindUpcoming(context.Background(), now.Add(1*time.Minute).Add(30*time.Second))
+				ctx2,cancel:=context.WithTimeout(context.Background(),time.Second*5)
+				defer cancel()
+				current, err := s.EventService.FindUpcoming(ctx2, now.Add(1*time.Minute).Add(30*time.Second))
 				if err != nil {
 					s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
 				}
 				for _, event := range current {
 				curmsg := "cобытие " + event.Body + " началось!"
-				s.NotificationService.CreateNotification(context.Background(), event, curmsg)
-				fmt.Printf("event: %s", event.Id)
+				s.NotificationService.CreateNotification(ctx2, event, curmsg)
 				if s.Bot!=nil{
 					if err := s.Bot.SendMsg(event, curmsg); err != nil {
 						s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)

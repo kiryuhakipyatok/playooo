@@ -60,12 +60,12 @@ func (eh *EventsHandler) CreateEvent(c *fiber.Ctx) error{
 			"error":"failed to create event: " +  err.Error(),
 		})
 	}
-	responce:=dto.EventResponse{
-		Id: event.Id,
-		AuthorId: event.AuthorId,
-		Time: event.Time,
-	}
-	return c.JSON(&responce)
+	// responce:=dto.EventResponse{
+	// 	Id: event.Id,
+	// 	AuthorId: event.AuthorId,
+	// 	Time: event.Time,
+	// }
+	return c.JSON(event)
 }
 
 // GetEvent godoc
