@@ -28,7 +28,7 @@ func NewNoticeRepository(db *pgx.Conn) NotificationRepository {
 
 func (nr *notificationRepository) Create(ctx context.Context, notification entities.Notification) error {
 	fmt.Println(notification)
-	if _,err:=nr.DB.Exec(ctx,"INSERT INTO notifications (id,event_id,user_id,body,time) values($1,$2,$3,$4,$5)",notification.Id,notification.EventId,notification.UserId,notification.Body,notification.Time);err!=nil{
+	if _,err:=nr.DB.Exec(ctx,"INSERT INTO notifications (id,user_id,event_id,body,time) values($1,$2,$3,$4,$5)",notification.Id,notification.EventId,notification.UserId,notification.Body,notification.Time);err!=nil{
 		return err
 	}
 	return nil

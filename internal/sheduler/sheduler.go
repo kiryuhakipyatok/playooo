@@ -33,7 +33,7 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 				now := time.Now()
 				ctx,cancel:=context.WithTimeout(context.Background(),time.Second*5)
 				defer cancel()
-				upcoming, err := s.EventService.FindUpcoming(ctx, now.Add(10*time.Minute).Add(15*time.Second))
+				upcoming, err := s.EventService.FindUpcoming(ctx, now.Add(10*time.Minute).Add(30*time.Second))
 				if err != nil {
 					s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
 				}
@@ -53,7 +53,7 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 					}
 					}	
 				}
-				current, err := s.EventService.FindUpcoming(context.Background(), now.Add(1*time.Minute).Add(15*time.Second))
+				current, err := s.EventService.FindUpcoming(context.Background(), now.Add(1*time.Minute).Add(30*time.Second))
 				if err != nil {
 					s.Logger.WithError(err).Errorf("failed to fetch upcoming events: %v", err)
 				}

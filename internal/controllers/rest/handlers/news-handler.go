@@ -63,7 +63,7 @@ func(nh *NewsHandler) CreateNews(c *fiber.Ctx) error {
 		Id: news.Id,
 		Title: news.Title,
 	}
-	return c.JSON(responce)
+	return c.JSON(&responce)
 }
 
 // GetNews godoc

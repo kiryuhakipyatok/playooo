@@ -65,7 +65,7 @@ func (eh *EventsHandler) CreateEvent(c *fiber.Ctx) error{
 		AuthorId: event.AuthorId,
 		Time: event.Time,
 	}
-	return c.JSON(responce)
+	return c.JSON(&responce)
 }
 
 // GetEvent godoc
