@@ -51,7 +51,7 @@ type AuthCfg struct{
 
 func LoadConfig() (*Config, error) {
 	cfg := Config{}
-	if err := env.Parse(cfg); err != nil {
+	if err := env.Parse(&cfg); err != nil {
 		return nil, err
 	}
 
