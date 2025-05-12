@@ -53,7 +53,7 @@ func Run() {
 	bcfg := bootstrap.NewBootstrapConfig(app, postgres, redis, logger, validator)
 	bcfg.BootstrapHandlers(stop, cfg)
 	bot,err:=bcfg.BootstrapBot(stop,cfg)
-	sheduler:=bcfg.BootstrapSheduler(stop,bot)
+	sheduler:=bcfg.BootstrapSheduler(stop,bot,cfg)
 	if err!=nil{
 		logger.WithError(err).Info("error start bot")
 	}else{
