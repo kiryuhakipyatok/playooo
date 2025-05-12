@@ -58,6 +58,7 @@ func (as *authService) Register(ctx context.Context,req dto.RegisterRequest) (*e
 }
 
 func(as *authService) Login(ctx context.Context, req dto.LoginRequest) (*string,error){
+	fmt.Println(as.Config.Auth.Secret)
 	if as.Config.Auth.Secret == "" {
 		return nil,errors.New("error secret .env value is empty")
 	}
