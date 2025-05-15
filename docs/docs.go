@@ -127,9 +127,9 @@ const docTemplate = `{
                 "summary": "Getting a logged in profile",
                 "responses": {
                     "200": {
-                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "description": "OK",
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/entities.User"
                         }
                     },
                     "400": {
@@ -179,9 +179,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "description": "OK",
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/dto.RegisterRequest"
                         }
                     },
                     "400": {
@@ -2161,7 +2161,7 @@ const docTemplate = `{
                 "minute": {
                     "type": "string"
                 },
-                "notifiedPre": {
+                "notificated_pre": {
                     "type": "boolean"
                 }
             }
@@ -2169,6 +2169,15 @@ const docTemplate = `{
         "entities.Game": {
             "type": "object",
             "properties": {
+                "banner": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -2177,6 +2186,9 @@ const docTemplate = `{
                 },
                 "num_of_players": {
                     "type": "integer"
+                },
+                "picture": {
+                    "type": "string"
                 },
                 "rating": {
                     "type": "number"
@@ -2250,7 +2262,7 @@ const docTemplate = `{
                 "login": {
                     "type": "string"
                 },
-                "num_of_ratings": {
+                "number_of_rating": {
                     "type": "integer"
                 },
                 "rating": {

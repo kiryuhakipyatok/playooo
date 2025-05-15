@@ -121,9 +121,9 @@
                 "summary": "Getting a logged in profile",
                 "responses": {
                     "200": {
-                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "description": "OK",
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/entities.User"
                         }
                     },
                     "400": {
@@ -173,9 +173,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\\\"message\\\":\\\"string\\\"}",
+                        "description": "OK",
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/dto.RegisterRequest"
                         }
                     },
                     "400": {
@@ -2155,7 +2155,7 @@
                 "minute": {
                     "type": "string"
                 },
-                "notifiedPre": {
+                "notificated_pre": {
                     "type": "boolean"
                 }
             }
@@ -2163,6 +2163,15 @@
         "entities.Game": {
             "type": "object",
             "properties": {
+                "banner": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -2171,6 +2180,9 @@
                 },
                 "num_of_players": {
                     "type": "integer"
+                },
+                "picture": {
+                    "type": "string"
                 },
                 "rating": {
                     "type": "number"
@@ -2244,7 +2256,7 @@
                 "login": {
                     "type": "string"
                 },
-                "num_of_ratings": {
+                "number_of_rating": {
                     "type": "integer"
                 },
                 "rating": {

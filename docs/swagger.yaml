@@ -197,17 +197,25 @@ definitions:
         type: integer
       minute:
         type: string
-      notifiedPre:
+      notificated_pre:
         type: boolean
     type: object
   entities.Game:
     properties:
+      banner:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
       name:
         type: string
       num_of_events:
         type: integer
       num_of_players:
         type: integer
+      picture:
+        type: string
       rating:
         type: number
     type: object
@@ -255,7 +263,7 @@ definitions:
         type: string
       login:
         type: string
-      num_of_ratings:
+      number_of_rating:
         type: integer
       rating:
         type: number
@@ -339,9 +347,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{\"message\":\"string\"}'
+          description: OK
           schema:
-            type: object
+            $ref: '#/definitions/entities.User'
         "400":
           description: '{\"error\":\"string\"}'
           schema:
@@ -375,9 +383,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{\"message\":\"string\"}'
+          description: OK
           schema:
-            type: object
+            $ref: '#/definitions/dto.RegisterRequest'
         "400":
           description: '{\"error\":\"string\"}'
           schema:

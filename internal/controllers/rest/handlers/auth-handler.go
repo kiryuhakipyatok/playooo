@@ -37,7 +37,7 @@ func NewAuthHandler(as services.AuthService, l *logrus.Logger, v *validator.Vali
 // @Accept json
 // @Produce json
 // @Param request body dto.RegisterRequest true "Registration data"
-// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Success 200 {object}  dto.RegisterRequest
 // @Failure 400 {object} object "{\"error\":\"string\"}"
 // @Failure 408 {object} object "{\"error\":\"string\"}"
 // @Failure 500 {object} object "{\"error\":\"string\"}"
@@ -150,7 +150,7 @@ func(ah *AuthHandler) Logout(c *fiber.Ctx) error{
 // @Tags auth
 // @Produce json
 // @Security ApiKeyAuth
-// @Success 200 {object} object "{\"message\":\"string\"}"
+// @Success 200 {object} entities.User
 // @Failure 400 {object} object "{\"error\":\"string\"}"
 // @Failure 408 {object} object "{\"error\":\"string\"}"
 // @Failure 500 {object} object "{\"error\":\"string\"}"
