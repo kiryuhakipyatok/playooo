@@ -18,14 +18,15 @@ type AuthHandler struct {
 	AuthService services.AuthService
 	Validator    *validator.Validate
 	Logger       *logrus.Logger
-	Config 		config.Config
+	Config 		*config.Config
 }
 
-func NewAuthHandler(as services.AuthService, l *logrus.Logger, v *validator.Validate) AuthHandler{
+func NewAuthHandler(as services.AuthService, l *logrus.Logger, v *validator.Validate, cfg *config.Config) AuthHandler{
 	return AuthHandler{
 		AuthService: as,
 		Validator: v,
 		Logger: l,
+		Config: cfg,
 	}
 }
 
