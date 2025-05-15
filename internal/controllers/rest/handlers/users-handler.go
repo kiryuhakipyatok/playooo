@@ -116,6 +116,16 @@ func(uh *UsersHandler) UploadAvatar(c *fiber.Ctx) error{
 	if err := c.BodyParser(&request); err != nil {
 		return errh.ParseRequestError(eH, err)
 	}
+	id:=c.FormValue("id")
+	picture,err:=c.FormFile("picture")
+	if err!=nil{
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"error": "failed to get picture: " + err.Error(),
+		})
+	}
+	request.UserId=id
+	request.Picture=picture
 	if err := uh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
