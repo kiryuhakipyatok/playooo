@@ -60,7 +60,7 @@ func (us *userService) UploadAvatar(ctx context.Context, req dto.UploadAvatarReq
 		if err != nil {
 			return nil, err
 		}
-		uploadDir := "../../files/avatars"
+		uploadDir := "files/avatars"
 		if err := os.MkdirAll(uploadDir, 0755); err != nil {
 			return nil, err
 		}

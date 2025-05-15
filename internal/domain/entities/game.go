@@ -1,10 +1,11 @@
 package entities
 
-import "github.com/google/uuid"
-
 type Game struct {
-	Id              uuid.UUID `json:"id"`
+	Id              string `json:"id"`
 	Name            string  `json:"name"`
+	Description string `json:"description"`
+	Banner string `json:"banner"`
+	Picture string `json:"picture"`
 	NumberOfPlayers int     `json:"num_of_players"`
 	NumberOfEvents  int     `json:"num_of_events"`
 	Rating          float64 `json:"rating"`

@@ -23,15 +23,15 @@ func NewGameRepository(db *pgx.Conn) GameRepository {
 }
 
 func (gr *gameRepository) Save(ctx context.Context, game entities.Game) error{
-	if _,err:=gr.DB.Exec(ctx,"UPDATE games SET name=$1,number_of_players=$2,number_of_events=$3,rating=$4 WHERE name=$5",game.Name,game.NumberOfPlayers,game.NumberOfEvents,game.Rating,game.Name);err!=nil{
+	if _,err:=gr.DB.Exec(ctx,"UPDATE games SET name=$1,description=$2,banner=$3,picture=$4,number_of_players=$5,number_of_events=$6,rating=$7 WHERE id=$8",game.Name,game.Description,game.Banner,game.Picture,game.NumberOfPlayers,game.NumberOfEvents,game.Rating,game.Banner,game.Picture,game.Description,game.Id);err!=nil{
 		return err
 	}
 	return nil
 }
 
-func (gr *gameRepository) FindByName(ctx context.Context, name string) (*entities.Game, error){
+func (gr *gameRepository) FindByName(ctx context.Context, id string) (*entities.Game, error){
 	game:=entities.Game{}
-	if err:=gr.DB.QueryRow(ctx,"SELECT * FROM games WHERE name = $1",name).Scan(&game.Id,&game.Name,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
+	if err:=gr.DB.QueryRow(ctx,"SELECT * FROM games WHERE id = $1",id).Scan(&game.Id,&game.Name,&game.Description,&game.Banner,&game.Picture,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
 		return nil,err
 	}
 	return &game, nil
@@ -46,7 +46,7 @@ func (gr *gameRepository) Fetch(ctx context.Context, amount, page int) ([]entiti
 	defer rows.Close()
 	for rows.Next(){
 		game:=entities.Game{}
-		if err:=rows.Scan(&game.Name,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
+		if err:=rows.Scan(&game.Id,&game.Name,&game.Description,&game.Banner,&game.Picture,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
 			return nil,err
 		}
 		games=append(games, game)
