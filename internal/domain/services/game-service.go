@@ -41,6 +41,7 @@ func (gs *gameService) AddGameToUser(ctx context.Context, req dto.AddGameRequest
 		}
 		user.Games=append(user.Games, game.Name)
 		game.NumberOfPlayers++
+		game.CalculateRating()
 		if err:=gs.GameRepository.Save(c,*game);err!=nil{
 			return nil,err
 		}

@@ -33,7 +33,7 @@ func (rcfg *RoutConfig) Setup() {
 func (rcfg *RoutConfig) SetupUserRoute() {
 	userGroup := rcfg.App.Group("/api/users")
 
-	userGroup.Patch("/avatar/:id", rcfg.UserHandler.UploadAvatar)
+	userGroup.Patch("/avatar", rcfg.UserHandler.UploadAvatar)
 	userGroup.Patch("/discord", rcfg.UserHandler.RecordDiscord)
 	userGroup.Patch("/rating", rcfg.UserHandler.EditRating)
 

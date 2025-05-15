@@ -119,7 +119,7 @@ func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
 func(gh *GamesHandler) GetGames(c *fiber.Ctx) error{
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
-	eH := errh.NewErrorHander(c, gh.Logger, "delete-game")
+	eH := errh.NewErrorHander(c, gh.Logger, "get-game")
 	params := dto.PaginationRequest{}
 	if err:=c.QueryParser(params);err!=nil{
 		return errh.ParseRequestError(eH,err)

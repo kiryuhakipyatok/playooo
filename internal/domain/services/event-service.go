@@ -71,6 +71,7 @@ func (es *eventService)	CreateEvent(ctx context.Context, req dto.CreateEventRequ
 			return nil,err
 		}
 		game.NumberOfEvents++
+		game.CalculateRating()
 		if err:=es.GameRepository.Save(c,*game);err!=nil{
 			return nil,err
 		}
