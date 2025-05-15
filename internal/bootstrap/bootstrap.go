@@ -60,7 +60,7 @@ func(bcfg *BootstrapConfig) BootstrapHandlers(stop chan struct{}, cfg *config.Co
 	friendshipsService :=services.NewFriendshipsService(friendshipsRepository,userRepository)
 
 	userHandler := handlers.NewUsersHandler(userService, bcfg.Logger, bcfg.Validator)
-	authHander := handlers.NewAuthHandler(authService, bcfg.Logger, bcfg.Validator)
+	authHander := handlers.NewAuthHandler(authService, bcfg.Logger, bcfg.Validator,cfg)
 	gameHandler := handlers.NewGamesHandler(gameService, bcfg.Logger, bcfg.Validator)
 	eventHandler := handlers.NewEventHandler(eventService, bcfg.Logger, bcfg.Validator)
 	newsHandler := handlers.NewNewsHandler(newsService, bcfg.Logger, bcfg.Validator)
