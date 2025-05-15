@@ -87,7 +87,7 @@ func (us *userService) UploadAvatar(ctx context.Context, req dto.UploadAvatarReq
 			host = us.Config.Server.Host
 			port = us.Config.Server.Port
 		)
-		fileURL := fmt.Sprintf("http://%s%s/files/avatars/%s", host, port, fileName)
+		fileURL := fmt.Sprintf("http://%s:%s/files/avatars/%s", host, port, fileName)
 
 		user.Avatar = fileURL
 		if err := us.UserRepository.Save(c, *user); err != nil {

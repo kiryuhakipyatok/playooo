@@ -77,7 +77,7 @@ func (ns *newsService) CreateNews(ctx context.Context, req dto.CreateNewsRequest
 			port = ns.Config.Server.Port
 		)
 
-		fileURL := fmt.Sprintf("http://%s%s/files/news-pictures/%s", host, port, fileName)
+		fileURL := fmt.Sprintf("http://%s:%s/files/news-pictures/%s", host, port, fileName)
 
 		news.Picture = fileURL
 		if err := ns.NewsRepository.Create(c, news); err != nil {
