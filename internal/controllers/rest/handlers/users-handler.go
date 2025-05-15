@@ -138,7 +138,7 @@ func(uh *UsersHandler) UploadAvatar(c *fiber.Ctx) error{
 			"error": "failed to upload avatar: " + err.Error(),
 		})
 	}
-	uh.Logger.Info(request.Picture)
+	uh.Logger.Info("user's avatar uploaded successfully")
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
