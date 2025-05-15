@@ -64,7 +64,7 @@ func (us *userService) UploadAvatar(ctx context.Context, req dto.UploadAvatarReq
 		if err := os.MkdirAll(uploadDir, 0755); err != nil {
 			return nil, err
 		}
-		if _, err := os.Stat(uploadDir); err != nil {
+		if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 			return nil, err
 		}
 		fileName := fmt.Sprintf("%s%s", user.Id, filepath.Ext(req.Picture.Filename))
