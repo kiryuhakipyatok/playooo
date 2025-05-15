@@ -69,6 +69,11 @@ func (us *userService) UploadAvatar(ctx context.Context, req dto.UploadAvatarReq
 		}
 		fileName := fmt.Sprintf("%s%s", user.Id, filepath.Ext(req.Picture.Filename))
 		filepath := filepath.Join(uploadDir, fileName)
+		if _, err := os.Stat(filepath); err == nil {
+            if err := os.Remove(filepath); err != nil {
+                return nil, err
+            }
+        }
 		dst, err := os.Create(filepath)
 		if err != nil {
 			return nil, err

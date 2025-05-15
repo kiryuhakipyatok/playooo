@@ -57,6 +57,11 @@ func (ns *newsService) CreateNews(ctx context.Context, req dto.CreateNewsRequest
 		}
 		fileName := fmt.Sprintf("%s-news-picture%s", news.Id, filepath.Ext(req.Picture.Filename))
 		filepath := filepath.Join(uploadDir, fileName)
+		if _, err := os.Stat(filepath); err == nil {
+            if err := os.Remove(filepath); err != nil {
+                return nil, err
+            }
+        }
 		dst, err := os.Create(filepath)
 		if err != nil {
 			return nil, err
