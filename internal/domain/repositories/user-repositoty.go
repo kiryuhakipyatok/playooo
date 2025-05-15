@@ -48,8 +48,8 @@ func (ur *userRepository) Create(ctx context.Context, user entities.User) error 
 }
 
 func (ur *userRepository) Save(ctx context.Context, user entities.User) error {
-	if _,err := ur.DB.Exec(ctx,"UPDATE users SET chat_id=$1,rating=$2,total_rating=$3,number_of_ratings=$4,games=$5,avatar=$6,discord=$7 where id = $8",
-	user.ChatId,user.Rating,user.TotalRating,user.NumberOfRatings,user.Games,user.Avatar,user.Discord,user.Id);err!=nil {
+	if _,err := ur.DB.Exec(ctx,"UPDATE users SET chat_id=$1,rating=$2,total_rating=$3,number_of_rating=$4,games=$5,avatar=$6,discord=$7 where id = $8",
+	user.ChatId,user.Rating,user.TotalRating,user.NumberOfRating,user.Games,user.Avatar,user.Discord,user.Id);err!=nil {
 		return err
 	}
 	if ur.Redis != nil {
@@ -85,7 +85,7 @@ func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities
 		&user.ChatId,
 		&user.Rating,
 		&user.TotalRating,
-		&user.NumberOfRatings,
+		&user.NumberOfRating,
 		&user.Games,
 		&user.Password,
 		&user.Avatar,
@@ -154,7 +154,7 @@ func (ur *userRepository) Fetch(ctx context.Context, amount, page int) ([]entiti
 		&user.ChatId,
 		&user.Rating,
 		&user.TotalRating,
-		&user.NumberOfRatings,
+		&user.NumberOfRating,
 		&user.Games,
 		&user.Password,
 		&user.Avatar,

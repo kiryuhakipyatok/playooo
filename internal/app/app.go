@@ -34,13 +34,13 @@ func Run() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	postgres, err := p.Connect(cfg)
 	if err != nil {
-		logger.Fatal("failed to connect to postgres")
+		logger.WithError(err).Fatal("failed to connect to postgres")
 	} else {
 		logger.Info("connect to postgres succefully")
 	}
 	redis, err := r.Connect(cfg)
 	if err != nil {
-		logger.Info("failed to connect to redis")
+		logger.WithError(err).Info("failed to connect to redis")
 	} else {
 		logger.Info("connect to redis succefully")
 	}
