@@ -76,29 +76,27 @@ func (ur *userRepository) ExistByLoginOrTg(ctx context.Context, login, tg string
 }
 
 func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities.User, error){
-	// user:=entities.User{}
-	// query:=fmt.Sprintf("SELECT id,login,telegram,chat_id,rating,total_rating,number_of_ratings,games,avatar,discord, date_of_register::timestamptz from users where %s = $1",vari)
-	// if err := ur.DB.QueryRow(ctx,query,val).Scan(
-	// 	&user.Id,
-	// 	&user.Login,
-	// 	&user.Telegram,
-	// 	&user.ChatId,
-	// 	&user.Rating,
-	// 	&user.TotalRating,
-	// 	&user.NumberOfRating,
-	// 	&user.Games,
-	// 	&user.Avatar,
-	// 	&user.Discord,
-	// 	&user.DateOfRegister,
-	// )
-	var time time.Time
-	query:=fmt.Sprintf("SELECT date_of_register::timestamptz from users where %s = $1",vari)
-	if err := ur.DB.QueryRow(ctx,query,val).Scan(&time)
-	err != nil {
-		return nil,err
-	}
-	fmt.Println(time)
-	return nil,nil
+		user:=entities.User{}
+		query:=fmt.Sprintf("SELECT id,login,telegram,chat_id,rating,total_rating,number_of_ratings,games,avatar,discord, date_of_register::timestamp from users where %s = $1",vari)
+		if err := ur.DB.QueryRow(ctx,query,val).Scan(
+			&user.Id,
+			&user.Login,
+			&user.Telegram,
+			&user.ChatId,
+			&user.Rating,
+			&user.TotalRating,
+			&user.NumberOfRating,
+			&user.Games,
+			&user.Avatar,
+			&user.Discord,
+			&user.DateOfRegister,
+		)
+
+		err != nil {
+			return nil,err
+		}
+
+	return &user,nil
 }
 
 func (ur *userRepository) FindById(ctx context.Context, id string) (*entities.User, error) {
