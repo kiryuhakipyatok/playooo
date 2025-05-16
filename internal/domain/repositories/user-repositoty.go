@@ -90,6 +90,7 @@ func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities
 		&user.Password,
 		&user.Avatar,
 		&user.Discord,
+		&user.DateOfRegister,
 	)
 	err != nil {
 		return nil,err
