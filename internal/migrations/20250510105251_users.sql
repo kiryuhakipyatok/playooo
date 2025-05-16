@@ -11,7 +11,7 @@ CREATE TABLE users(
     games text[],
     password BYTEA NOT NULL,
     avatar TEXT DEFAULT 'absent',
-    discord VARCHAR(45) UNIQUE DEFAULT NULL,
+    discord VARCHAR(45) DEFAULT 'unknown',
     date_of_register DATE NOT NULL
 )
 -- +goose StatementEnd
