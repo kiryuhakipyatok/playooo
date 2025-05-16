@@ -87,6 +87,7 @@ func (gs *gameService) DeleteGame(ctx context.Context, req dto.DeleteGameRequest
 		})
 		user.Games = games
 		game.NumberOfPlayers-- 
+		game.CalculateRating()
 		if err:=gs.UserRepository.Save(c,*user);err!=nil{
 			return nil,err
 		}

@@ -921,7 +921,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retrieve paginated list of user's games
+      description: Retrieve paginated list of games
       parameters:
       - in: query
         name: amount
@@ -954,7 +954,7 @@ paths:
             type: object
       security:
       - ApiKeyAuth: []
-      summary: Get user's games
+      summary: Get games
       tags:
       - games
     post:

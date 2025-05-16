@@ -960,7 +960,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Retrieve paginated list of user's games",
+                "description": "Retrieve paginated list of games",
                 "consumes": [
                     "application/json"
                 ],
@@ -970,7 +970,7 @@ const docTemplate = `{
                 "tags": [
                     "games"
                 ],
-                "summary": "Get user's games",
+                "summary": "Get games",
                 "parameters": [
                     {
                         "type": "integer",
