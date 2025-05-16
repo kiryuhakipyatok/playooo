@@ -91,16 +91,14 @@ func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities
 	// 	&user.Discord,
 	// 	&user.DateOfRegister,
 	// )
-	var user any
+	var time time.Time
 	query:=fmt.Sprintf("SELECT date_of_register::timestamptz from users where %s = $1",vari)
-	if err := ur.DB.QueryRow(ctx,query,val).Scan(
-		&user,
-	)
+	if err := ur.DB.QueryRow(ctx,query,val).Scan(&time)
 	err != nil {
 		return nil,err
 	}
-	fmt.Println(user)
-	return user.(*entities.User),nil
+	fmt.Println(time)
+	return nil,nil
 }
 
 func (ur *userRepository) FindById(ctx context.Context, id string) (*entities.User, error) {
