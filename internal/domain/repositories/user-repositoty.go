@@ -77,7 +77,7 @@ func (ur *userRepository) ExistByLoginOrTg(ctx context.Context, login, tg string
 
 func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities.User, error){
 	user:=entities.User{}
-	query:=fmt.Sprintf("SELECT id,login,telegram,chat_id,rating,total_rating,number_of_rating,games,avatar,discord, date_of_register::timestamptz from users where %s = $1",vari)
+	query:=fmt.Sprintf("SELECT id,login,telegram,chat_id,rating,total_rating,number_of_ratings,games,avatar,discord, date_of_register::timestamptz from users where %s = $1",vari)
 	if err := ur.DB.QueryRow(ctx,query,val).Scan(
 		&user.Id,
 		&user.Login,
@@ -94,6 +94,7 @@ func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities
 	err != nil {
 		return nil,err
 	}
+	fmt.Println(user.DateOfRegister)
 	return &user,nil
 }
 
