@@ -34,7 +34,7 @@ func NewUserRepository(db *pgx.Conn, redis *redis.Client) UserRepository {
 }
 
 func (ur *userRepository) Create(ctx context.Context, user entities.User) error {
-	if _,err := ur.DB.Exec(ctx,"INSERT INTO users (id,login,telegram,password) VALUES ($1,$2,$3,$4)", user.Id,user.Login,user.Telegram,user.Password);err!=nil{
+	if _,err := ur.DB.Exec(ctx,"INSERT INTO users (id,login,telegram,password,date_of_register) VALUES ($1,$2,$3,$4,$5)", user.Id,user.Login,user.Telegram,user.Password,user.DateOfRegister);err!=nil{
 		return err
 	}
 	if ur.Redis != nil {
