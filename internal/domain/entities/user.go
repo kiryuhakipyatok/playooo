@@ -2,7 +2,6 @@ package entities
 
 import (
 	"github.com/google/uuid"
-//	"time"
 )
 
 type User struct {
@@ -17,5 +16,5 @@ type User struct {
 	Password        []byte	       `json:"-"`
 	Avatar          string		`json:"avatar"`
 	Discord         string		`json:"discord"`
-	// DateOfRegister 	time.Time 	`json:"date_of_register"`
+	DateOfRegister 	string 	`json:"date_of_register"`
 }

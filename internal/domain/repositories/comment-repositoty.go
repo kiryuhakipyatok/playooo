@@ -39,11 +39,11 @@ func (cr *commentRepository) Fetch(ctx context.Context,whose, id string, amount,
 	var query string
 	switch whose{
 	case "user":
-		query = "SELECT * FROM comments c JOIN users_comments uc ON c.id=uc.comment_id WHERE uc.user_id = $1 OFFSET $2 LIMIT $3"
+		query = "SELECT * FROM comments c JOIN users_comments uc ON c.id=uc.comment_id WHERE uc.user_id = $1 ORDER BY time OFFSET $2 LIMIT $3"
 	case "event":
-		query = "SELECT * FROM comments c JOIN events_comments ec ON c.id=ec.comment_id WHERE ec.event_id = $1 OFFSET $2 LIMIT $3"
+		query = "SELECT * FROM comments c JOIN events_comments ec ON c.id=ec.comment_id WHERE ec.event_id = $1 ORDER BY time OFFSET $2 LIMIT $3"
 	case "news":
-		query = "SELECT * FROM comments c JOIN news_comments uc ON c.id=nc.comment_id WHERE nc.news_id = $1 OFFSET $2 LIMIT $3"
+		query = "SELECT * FROM comments c JOIN news_comments uc ON c.id=nc.comment_id WHERE nc.news_id = $1 ORDER BY time OFFSET $2 LIMIT $3"
 	}
 	rows,err:=cr.DB.Query(ctx,query,id,page*amount-amount, amount)
 	if err!=nil{

@@ -45,11 +45,13 @@ func (as *authService) Register(ctx context.Context,req dto.RegisterRequest) (*e
 	if err != nil {
 		return nil, err
 	}
+	y,m,d:=time.Now().Date()
 	user := entities.User{
 		Id:       uuid.New(),
 		Login:    req.Login,
 		Telegram: req.Telegram,
 		Password: hashPassword,
+		DateOfRegister: fmt.Sprintf("%d-%s-%d",y,m,d),
 	}
 	if err := as.UserRepository.Create(ctx, user); err != nil {
 		return nil, err

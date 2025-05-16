@@ -39,7 +39,7 @@ func (gr *gameRepository) FindByName(ctx context.Context, id string) (*entities.
 
 func (gr *gameRepository) Fetch(ctx context.Context, amount, page int) ([]entities.Game, error){
 	games := []entities.Game{}
-	rows,err:=gr.DB.Query(ctx,"SELECT * FROM games OFFSET $1 LIMIT $2",amount*page-amount,amount)
+	rows,err:=gr.DB.Query(ctx,"SELECT * FROM games ORDER BY number_of_players DESC OFFSET $1 LIMIT $2",amount*page-amount,amount)
 	if err!=nil{
 		return nil,err
 	}

@@ -48,7 +48,7 @@ func (nr *newsRepository) FindById(ctx context.Context, id string) (*entities.Ne
 
 func (nr *newsRepository) Fetch(ctx context.Context, amount, page int) ([]entities.News, error) {
 	somenews := []entities.News{}
-	rows,err:=nr.DB.Query(ctx,"SELECT * FROM news OFFSET $1 LIMIT $2",page*amount-amount,amount)
+	rows,err:=nr.DB.Query(ctx,"SELECT * FROM news OREDER BY time OFFSET $1 LIMIT $2",page*amount-amount,amount)
 	if err!=nil{
 		return nil,err
 	}
