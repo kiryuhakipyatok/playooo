@@ -12,7 +12,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -46,15 +45,12 @@ func (as *authService) Register(ctx context.Context,req dto.RegisterRequest) (*e
 	if err != nil {
 		return nil, err
 	}
-	regTime:= pgtype.Date{
-		Time: time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),0,0,0,0,time.Now().Location()),
-	}
 	user := entities.User{
 		Id:       uuid.New(),
 		Login:    req.Login,
 		Telegram: req.Telegram,
 		Password: hashPassword,
-		DateOfRegister: regTime,
+		DateOfRegister: time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),0,0,0,0,time.Now().Location()),
 	}
 	if err := as.UserRepository.Create(ctx, user); err != nil {
 		return nil, err
