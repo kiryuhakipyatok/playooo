@@ -1,9 +1,8 @@
 package entities
 
 import (
-	"time"
-
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type User struct {
@@ -18,5 +17,5 @@ type User struct {
 	Password        []byte	       `json:"-"`
 	Avatar          string		`json:"avatar"`
 	Discord         string		`json:"discord"`
-	DateOfRegister 	time.Time 	`json:"date_of_register"`
+	DateOfRegister 	pgtype.Date  `json:"date_of_register"`
 }
