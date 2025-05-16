@@ -48,8 +48,8 @@ func (ur *userRepository) Create(ctx context.Context, user entities.User) error 
 }
 
 func (ur *userRepository) Save(ctx context.Context, user entities.User) error {
-	if _,err := ur.DB.Exec(ctx,"UPDATE users SET chat_id=$1,rating=$2,total_rating=$3,number_of_rating=$4,games=$5,avatar=$6,discord=$7, date_of_register=$8 where id = $9",
-	user.ChatId,user.Rating,user.TotalRating,user.NumberOfRating,user.Games,user.Avatar,user.Discord,user.DateOfRegister,user.Id);err!=nil {
+	if _,err := ur.DB.Exec(ctx,"UPDATE users SET chat_id=$1,rating=$2,total_rating=$3,number_of_ratings=$4,games=$5,avatar=$6,discord=$7, date_of_register=$8 where id = $9",
+	user.ChatId,user.Rating,user.TotalRating,user.NumberOfRatings,user.Games,user.Avatar,user.Discord,user.DateOfRegister,user.Id);err!=nil {
 		return err
 	}
 	if ur.Redis != nil {
@@ -77,7 +77,7 @@ func (ur *userRepository) ExistByLoginOrTg(ctx context.Context, login, tg string
 
 func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities.User, error){
 		user:=entities.User{}
-		query:=fmt.Sprintf("SELECT id,login,telegram,chat_id,rating,total_rating,number_of_ratings,games,avatar,discord, date_of_register::timestamp from users where %s = $1",vari)
+		query:=fmt.Sprintf("SELECT id,login,telegram,chat_id,rating,total_rating,number_of_ratings,games,avatar,discord,date_of_register::timestamp from users where %s = $1",vari)
 		if err := ur.DB.QueryRow(ctx,query,val).Scan(
 			&user.Id,
 			&user.Login,
@@ -85,7 +85,7 @@ func (ur *userRepository) FindBy(ctx context.Context,vari,val string) (*entities
 			&user.ChatId,
 			&user.Rating,
 			&user.TotalRating,
-			&user.NumberOfRating,
+			&user.NumberOfRatings,
 			&user.Games,
 			&user.Avatar,
 			&user.Discord,
@@ -156,11 +156,12 @@ func (ur *userRepository) Fetch(ctx context.Context, amount, page int) ([]entiti
 		&user.ChatId,
 		&user.Rating,
 		&user.TotalRating,
-		&user.NumberOfRating,
+		&user.NumberOfRatings,
 		&user.Games,
 		&user.Password,
 		&user.Avatar,
 		&user.Discord,
+		&user.DateOfRegister,
 		)
 		err != nil {
 			return nil, err

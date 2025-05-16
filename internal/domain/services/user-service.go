@@ -146,9 +146,9 @@ func (us *userService) EditRating(ctx context.Context, req dto.EditRatingRequest
 	if err != nil {
 		return err
 	}
-	user.NumberOfRating++
+	user.NumberOfRatings++
 	user.TotalRating += req.Stars
-	averageRating := float64(user.TotalRating) / float64(user.NumberOfRating)
+	averageRating := float64(user.TotalRating) / float64(user.NumberOfRatings)
 	user.Rating = math.Round(averageRating*2) / 2
 	if err := us.UserRepository.Save(ctx, *user); err != nil {
 		return err
