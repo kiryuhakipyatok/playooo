@@ -69,6 +69,7 @@ func(ah *AuthHandler) Register(c *fiber.Ctx) error{
 		Id: user.Id,
 		Login: user.Login,
 		Telegram: user.Telegram,
+		Date: user.DateOfRegister,
 	}
 	return c.JSON(response)
 }

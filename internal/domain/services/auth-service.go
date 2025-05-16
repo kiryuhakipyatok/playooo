@@ -7,7 +7,6 @@ import (
 	"crap/internal/domain/repositories"
 	"crap/internal/dto"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -55,12 +54,10 @@ func (as *authService) Register(ctx context.Context,req dto.RegisterRequest) (*e
 	if err := as.UserRepository.Create(ctx, user); err != nil {
 		return nil, err
 	}
-	fmt.Println(user)
 	return &user, nil
 }
 
 func(as *authService) Login(ctx context.Context, req dto.LoginRequest) (*string,error){
-	fmt.Println(as.Config.Auth.Secret)
 	if as.Config.Auth.Secret == "" {
 		return nil,errors.New("error secret .env value is empty")
 	}

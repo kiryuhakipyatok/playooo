@@ -9,6 +9,7 @@ type RegisterResponse struct {
 	Id       uuid.UUID `json:"id"`
 	Login    string    `json:"login"`
 	Telegram string    `json:"telegram"`
+	Date time.Time `json:"date_of_register"`
 }
 
 type NewsResponse struct {
