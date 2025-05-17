@@ -3,10 +3,12 @@ package repositories
 import (
 	"context"
 	"crap/internal/domain/entities"
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/redis/go-redis/v9"
-	"time"
-	"encoding/json"
 )
 
 type EventRepository interface{
@@ -19,6 +21,8 @@ type EventRepository interface{
 	Unjoin(ctx context.Context,user_id,event_id string) error
 	FetchMembers(ctx context.Context,id string) ([]string,error)
 	Save(c context.Context, event entities.Event) error
+	Filter(ctx context.Context, game,max,time string, amount, page int) ([]entities.Event, error)
+	Sort(ctx context.Context, field,dir string, amount, page int) ([]entities.Event, error)
 }
 
 type eventRepository struct {
@@ -180,4 +184,51 @@ func (er *eventRepository) FetchMembers(ctx context.Context,id string) ([]string
 		members = append(members, id)
 	}
 	return members,nil
+}
+
+func (er *eventRepository) Filter(ctx context.Context, game,max,time string, amount, page int) ([]entities.Event, error){
+	var q string
+	fields:=map[string]string{
+		"game":game,
+		"max":max,
+		"time":time,
+	}
+	for f,v:=range fields{
+		if v!=""{
+			q+=fmt.Sprintf(" WHERE %s=%s",f,v)
+		}
+	}
+	events:=[]entities.Event{}
+	query:="SELECT * FROM events $1 OFFSET $2 LIMIT $3"
+	rows,err:=er.DB.Query(ctx,query,q,amount*page-amount,amount)
+	if err!=nil{
+		return nil,err
+	}
+	defer rows.Close()
+	for rows.Next(){
+		event:=entities.Event{}
+		if err:=rows.Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotificatedPre);err!=nil{
+			return nil,err
+		}
+		events=append(events,event)
+	}
+	return events,nil
+}
+
+func (er *eventRepository) Sort(ctx context.Context, field,dir string, amount, page int) ([]entities.Event, error){
+	events:=[]entities.Event{}
+	query:="SELECT * FROM events ORDER BY $1 $2 OFFSET $3 LIMIT $4"
+	rows,err:=er.DB.Query(ctx, query,field,dir,amount*page-amount,amount)
+	if err!=nil{
+		return nil,err
+	}
+	defer rows.Close()
+	for rows.Next(){
+		event:=entities.Event{}
+		if err:=rows.Scan(&event.Id,&event.AuthorId,&event.Body,&event.Game,&event.Max,&event.Time,&event.NotificatedPre);err!=nil{
+			return nil,err
+		}
+		events=append(events,event)
+	}
+	return events,nil
 }

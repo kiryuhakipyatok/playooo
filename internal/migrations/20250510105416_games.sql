@@ -5,7 +5,7 @@ CREATE TABLE games(
     name VARCHAR(45) NOT NULL UNIQUE,
     description TEXT NOT NULL,
     banner TEXT NOT NULL,
-    photo TEXT NOT NULL,
+    picture TEXT NOT NULL,
     number_of_players INT DEFAULT 0,
     number_of_events INT DEFAULT 0,
     rating NUMERIC DEFAULT 0.0

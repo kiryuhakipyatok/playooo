@@ -2,14 +2,16 @@ package repositories
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5"
 	"crap/internal/domain/entities"
+	"github.com/jackc/pgx/v5"
 )
 
 type GameRepository interface {
 	Save(ctx context.Context, game entities.Game) error
 	FindByName(ctx context.Context, name string) (*entities.Game, error)
 	Fetch(ctx context.Context, amount, page int) ([]entities.Game, error)
+	Filter(ctx context.Context, name string, amount, page int) ([]entities.Game, error)
+	Sort(ctx context.Context, field,dir string, amount, page int) ([]entities.Game, error)
 }
 
 type gameRepository struct {
@@ -52,4 +54,40 @@ func (gr *gameRepository) Fetch(ctx context.Context, amount, page int) ([]entiti
 		games=append(games, game)
 	}
 	return games, nil
+}
+
+func (gr *gameRepository) Filter(ctx context.Context, name string, amount, page int) ([]entities.Game, error){
+	games:=[]entities.Game{}
+	query:="SELECT * FROM games WHERE name = $1 OFFSET $2 LIMIT $3"
+	rows,err:=gr.DB.Query(ctx, query, name, amount*page-amount,amount)
+	if err!=nil{
+		return nil,err
+	}
+	defer rows.Close()
+	for rows.Next(){
+		game:=entities.Game{}
+		if err:=rows.Scan(&game.Id,&game.Name,&game.Description,&game.Banner,&game.Picture,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
+			return nil,err
+		}
+		games=append(games, game)
+	}
+	return games,nil
+}
+
+func (gr *gameRepository) Sort(ctx context.Context, field, dir string, amount, page int) ([]entities.Game, error){
+	games:=[]entities.Game{}
+	query:="SELECT * FROM games ORDER BY $1 $2 OFFSET $3 LIMIT $4"
+	rows,err:=gr.DB.Query(ctx, query,field,dir,amount*page-amount,amount)
+	if err!=nil{
+		return nil,err
+	}
+	defer rows.Close()
+	for rows.Next(){
+		game:=entities.Game{}
+		if err:=rows.Scan(&game.Id,&game.Name,&game.Description,&game.Banner,&game.Picture,&game.NumberOfPlayers,&game.NumberOfEvents,&game.Rating);err!=nil{
+			return nil,err
+		}
+		games=append(games, game)
+	}
+	return games,nil
 }

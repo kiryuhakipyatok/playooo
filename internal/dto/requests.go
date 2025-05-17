@@ -104,6 +104,29 @@ type RecordDiscordRequest struct{
 
 type EditRatingRequest struct{
 	UserId string `json:"user-id" validate:"required"`
-	Stars int `json:"stars" validate:"required"`
+	Stars int `json:"stars" validate:"required,oneof=1 2 3 4 5"`
 }
 
+type GamesFilterRequest struct{
+	Name string `json:"game-name"`
+	PaginationRequest
+}
+
+type EventFilterRequest struct{
+	Game string `json:"game"`
+	Max string `json:"max"`
+	Time string `json:"time"`
+	PaginationRequest
+}
+
+type GamesSortRequest struct{
+	Field string `json:"field" validate:"required,oneof=events players rating"`
+	Direction string `json:"direction"`
+	PaginationRequest
+}
+
+type EventsSortRequest struct{
+	Field string `json:"field" validate:"required,oneof=max time"`
+	Direction string `json:"direction"`
+	PaginationRequest
+}
