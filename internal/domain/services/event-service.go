@@ -21,6 +21,8 @@ type EventService interface {
 	Save(ctx context.Context, event entities.Event) error
 	Join(ctx context.Context, req dto.JoinToEventRequest) error
 	Unjoin(ctx context.Context, req dto.UnjoinFromEventRequest) error
+	GetSorted(ctx context.Context, req dto.EventsSortRequest) ([]entities.Event, error)
+	GetFiltered(ctx context.Context, req dto.EventsFilterRequest) ([]entities.Event, error)
 }
 
 type eventService struct {
@@ -171,4 +173,20 @@ func (es *eventService)	Unjoin(ctx context.Context, req dto.UnjoinFromEventReque
 		return err
 	}
 	return nil
+}
+
+func (es *eventService) GetSorted(ctx context.Context, req dto.EventsSortRequest) ([]entities.Event, error){
+	events,err:=es.EventRepository.Sort(ctx,req.Field,req.Direction,req.Amount,req.Page)
+	if err!=nil{
+		return nil,err
+	}
+	return events,nil
+}
+
+func (es *eventService)	GetFiltered(ctx context.Context, req dto.EventsFilterRequest) ([]entities.Event, error){
+	events,err:=es.EventRepository.Filter(ctx,req.Game,req.Max,req.Time,req.Amount,req.Page)
+	if err!=nil{
+		return nil,err
+	}
+	return events,nil
 }

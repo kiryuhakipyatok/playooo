@@ -195,12 +195,16 @@ func (er *eventRepository) Filter(ctx context.Context, game,max,time string, amo
 	}
 	for f,v:=range fields{
 		if v!=""{
-			q+=fmt.Sprintf(" WHERE %s=%s",f,v)
+			if len(q)!=0{
+				q+=fmt.Sprintf(" AND %s='%s'",f,v)
+			}else{
+				q+=fmt.Sprintf(" WHERE %s='%s'",f,v)
+			}
 		}
 	}
 	events:=[]entities.Event{}
-	query:="SELECT * FROM events $1 OFFSET $2 LIMIT $3"
-	rows,err:=er.DB.Query(ctx,query,q,amount*page-amount,amount)
+	query:=fmt.Sprintf("SELECT * FROM events %s OFFSET $2 LIMIT $3",q)
+	rows,err:=er.DB.Query(ctx,query,amount*page-amount,amount)
 	if err!=nil{
 		return nil,err
 	}

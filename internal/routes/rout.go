@@ -81,6 +81,8 @@ func (rcfg *RoutConfig) SetupGameRoute() {
 	gameGroup.Delete("", rcfg.GameHandler.DeleteGame)
 
 	gameGroup.Get("/:name", rcfg.GameHandler.GetGame)
+	gameGroup.Get("/sort",rcfg.GameHandler.GetSortedGames)
+	gameGroup.Get("/filter",rcfg.GameHandler.GetFilteredGames)
 	gameGroup.Get("", rcfg.GameHandler.GetGames)
 }
 
@@ -92,7 +94,9 @@ func (rcfg *RoutConfig) SetupEventRoute() {
 	eventsGroup.Patch("/unjoin", rcfg.EventHandler.Unjoin)
 
 	eventsGroup.Get("/:id", rcfg.EventHandler.GetEvent)
-	eventsGroup.Get("/api/events", rcfg.EventHandler.GetEvents)
+	eventsGroup.Get("/sort",rcfg.EventHandler.GetSortedEvents)
+	eventsGroup.Get("/filter",rcfg.EventHandler.GetFilteredEvents)
+	eventsGroup.Get("", rcfg.EventHandler.GetEvents)
 }
 
 func (rcfg *RoutConfig) SetupNewsRoute() {

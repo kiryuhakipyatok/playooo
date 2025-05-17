@@ -112,7 +112,7 @@ type GamesFilterRequest struct{
 	PaginationRequest
 }
 
-type EventFilterRequest struct{
+type EventsFilterRequest struct{
 	Game string `json:"game"`
 	Max string `json:"max"`
 	Time string `json:"time"`

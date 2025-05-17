@@ -13,6 +13,8 @@ type GameService interface {
 	GetByName(ctx context.Context, name string) (*entities.Game, error)
 	FetchGames(ctx context.Context, req dto.PaginationRequest) ([]entities.Game, error)
 	DeleteGame(ctx context.Context, req dto.DeleteGameRequest) error
+	GetSorted(ctx context.Context, req dto.GamesSortRequest) ([]entities.Game, error)
+	GetFiltered(ctx context.Context, req dto.GamesFilterRequest) ([]entities.Game, error)
 }
 
 type gameService struct {
@@ -100,4 +102,20 @@ func (gs *gameService) DeleteGame(ctx context.Context, req dto.DeleteGameRequest
 		return err
 	}
 	return nil
+}
+
+func (gs *gameService) GetSorted(ctx context.Context, req dto.GamesSortRequest) ([]entities.Game, error){
+	games,err:=gs.GameRepository.Sort(ctx,req.Field,req.Direction,req.Amount,req.Page)
+	if err!=nil{
+		return nil,err
+	}
+	return games,nil
+}
+
+func (gs *gameService) GetFiltered(ctx context.Context, req dto.GamesFilterRequest) ([]entities.Game, error){
+	games,err:=gs.GameRepository.Filter(ctx,req.Name,req.Amount,req.Page)
+	if err!=nil{
+		return nil,err
+	}
+	return games,nil
 }

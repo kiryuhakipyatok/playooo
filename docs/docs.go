@@ -443,6 +443,84 @@ const docTemplate = `{
                 }
             }
         },
+        "/events/filter": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get filtered list of events by params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Get filtered events",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "game",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "max",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "time",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of events",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Event"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/events/join": {
             "post": {
                 "security": [
@@ -477,6 +555,84 @@ const docTemplate = `{
                         "description": "{\\\"message\\\":\\\"string\\\"}",
                         "schema": {
                             "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/sort": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get sorted list of events by params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Get sorted events",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "direction",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "max",
+                            "time"
+                        ],
+                        "type": "string",
+                        "name": "field",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of events",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Event"
+                            }
                         }
                     },
                     "400": {
@@ -1103,6 +1259,153 @@ const docTemplate = `{
                         "description": "{\\\"message\\\":\\\"string\\\"}",
                         "schema": {
                             "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/filter": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get filtered list of games by params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Get filtered games",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "game-name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of games",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Game"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "408": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "500": {
+                        "description": "{\\\"error\\\":\\\"string\\\"}",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/sort": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get sorted list of games by params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Get sorted games",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "amount",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "direction",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "events",
+                            "players",
+                            "rating"
+                        ],
+                        "type": "string",
+                        "name": "field",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of games",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Game"
+                            }
                         }
                     },
                     "400": {
@@ -2007,7 +2310,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "stars": {
-                    "type": "integer"
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ]
                 },
                 "user-id": {
                     "type": "string"
@@ -2245,6 +2555,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "chat_id": {
+                    "type": "string"
+                },
+                "date_of_register": {
                     "type": "string"
                 },
                 "discord": {

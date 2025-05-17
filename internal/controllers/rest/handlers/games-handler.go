@@ -6,6 +6,7 @@ import (
 	"crap/internal/dto"
 	errh "crap/pkg/errors-handlers"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -40,7 +41,7 @@ func NewGamesHandler(fs services.GameService, l *logrus.Logger, v *validator.Val
 // @Failure 408 {object} object "{\"error\":\"string\"}"
 // @Failure 500 {object} object "{\"error\":\"string\"}"
 // @Router /games [post]
-func(gh *GamesHandler) AddGame(c *fiber.Ctx) error {
+func (gh *GamesHandler) AddGame(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "add-game")
@@ -61,7 +62,7 @@ func(gh *GamesHandler) AddGame(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(fiber.Map{
-		"message":"success",
+		"message": "success",
 	})
 }
 
@@ -78,7 +79,7 @@ func(gh *GamesHandler) AddGame(c *fiber.Ctx) error {
 // @Failure 408 {object} object "{\"error\":\"string\"}"
 // @Failure 500 {object} object "{\"error\":\"string\"}"
 // @Router /games [delete]
-func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
+func (gh *GamesHandler) DeleteGame(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "delete-game")
@@ -89,7 +90,7 @@ func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
 	if err := gh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	if err:=gh.GameService.DeleteGame(ctx,request);err!=nil{
+	if err := gh.GameService.DeleteGame(ctx, request); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -99,7 +100,7 @@ func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
 		})
 	}
 	return c.JSON(fiber.Map{
-		"message":"success",
+		"message": "success",
 	})
 }
 
@@ -116,19 +117,19 @@ func(gh *GamesHandler) DeleteGame(c *fiber.Ctx) error{
 // @Failure 408 {object} object "{\"error\":\"string\"}"
 // @Failure 500 {object} object "{\"error\":\"string\"}"
 // @Router /games [get]
-func(gh *GamesHandler) GetGames(c *fiber.Ctx) error{
+func (gh *GamesHandler) GetGames(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "get-games")
 	params := dto.PaginationRequest{}
-	if err:=c.QueryParser(params);err!=nil{
-		return errh.ParseRequestError(eH,err)
+	if err := c.QueryParser(params); err != nil {
+		return errh.ParseRequestError(eH, err)
 	}
-	if err:=gh.Validator.Struct(params);err!=nil{
-		return errh.ValidateRequestError(eH,err)
+	if err := gh.Validator.Struct(params); err != nil {
+		return errh.ValidateRequestError(eH, err)
 	}
-	games,err:=gh.GameService.FetchGames(ctx,params)
-	if err!=nil{
+	games, err := gh.GameService.FetchGames(ctx, params)
+	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -153,13 +154,13 @@ func(gh *GamesHandler) GetGames(c *fiber.Ctx) error{
 // @Failure 408 {object} object "{\"error\":\"string\"}"
 // @Failure 500 {object} object "{\"error\":\"string\"}"
 // @Router /games/{game} [get]
-func(gh *GamesHandler) GetGame(c *fiber.Ctx) error{
+func (gh *GamesHandler) GetGame(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "get-game")
-	title:=c.Params("game")
-	game,err:=gh.GameService.GetByName(ctx,title)
-	if err!=nil{
+	title := c.Params("game")
+	game, err := gh.GameService.GetByName(ctx, title)
+	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -169,4 +170,82 @@ func(gh *GamesHandler) GetGame(c *fiber.Ctx) error{
 		})
 	}
 	return c.JSON(game)
+}
+
+// GetFilteredGames godoc
+// @Summary Get filtered games
+// @Description Get filtered list of games by params
+// @Tags games
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request query dto.GamesFilterRequest true "Filter parameters"
+// @Success 200 {array} entities.Game "List of games"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /games/filter [get]
+func (gh *GamesHandler) GetFilteredGames(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
+	defer cancel()
+	eH := errh.NewErrorHander(c, gh.Logger, "get-filtered-games")
+	request := dto.GamesFilterRequest{}
+	if err := c.QueryParser(&request); err != nil {
+		return errh.ParseRequestError(eH, err)
+	}
+	if err := gh.Validator.Struct(request); err != nil {
+		return errh.ValidateRequestError(eH, err)
+	}
+	games, err := gh.GameService.GetFiltered(ctx, request)
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			return errh.RequestTimedOut(eH, err)
+		}
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"error": "failed to fetch filtered games: " + err.Error(),
+		})
+	}
+	return c.JSON(games)
+}
+
+// GetSortedGames godoc
+// @Summary Get sorted games
+// @Description Get sorted list of games by params
+// @Tags games
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request query dto.GamesSortRequest true "Sort parameters"
+// @Success 200 {array} entities.Game "List of games"
+// @Failure 400 {object} object "{\"error\":\"string\"}"
+// @Failure 408 {object} object "{\"error\":\"string\"}"
+// @Failure 500 {object} object "{\"error\":\"string\"}"
+// @Router /games/sort [get]
+func (gh *GamesHandler) GetSortedGames(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
+	defer cancel()
+	eH := errh.NewErrorHander(c, gh.Logger, "get-sorted-games")
+	request := dto.GamesSortRequest{}
+	if err := c.QueryParser(&request); err != nil {
+		return errh.ParseRequestError(eH, err)
+	}
+	if err := gh.Validator.Struct(request); err != nil {
+		return errh.ValidateRequestError(eH, err)
+	}
+	request.Direction = strings.ToUpper(request.Direction)
+	if request.Direction == "" || request.Direction != "DESC" {
+		request.Direction = "ASC"
+	}
+	games, err := gh.GameService.GetSorted(ctx, request)
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			return errh.RequestTimedOut(eH, err)
+		}
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"error": "failed to fetch sorted games: " + err.Error(),
+		})
+	}
+	return c.JSON(games)
 }
