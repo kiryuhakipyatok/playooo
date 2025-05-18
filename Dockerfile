@@ -12,18 +12,13 @@ RUN go build -o ./bin/app cmd/app/main.go
 
 FROM alpine AS runner
 
-RUN apk update && \
-    apk add --no-cache tzdata ca-certificates && \
-    rm -rf /var/cache/apk/*
-
+RUN apk add --no-cache tzdata
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --from=builder /usr/local/src/bin/app /app
 
-COPY .env /.env
 COPY config/config.yaml /config/config.yaml
-COPY files /files
 
 EXPOSE 8080
 
