@@ -33,7 +33,7 @@ func NewGameService(gr repositories.GameRepository, ur repositories.UserReposito
 
 func (gs *gameService) AddGameToUser(ctx context.Context, req dto.AddGameRequest) error{
 	_,err:=gs.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-		game,err:=gs.GameRepository.FindByName(c,req.Game)
+		game,err:=gs.GameRepository.FindById(c,req.Game)
 		if err!=nil{
 			return nil,err
 		}
@@ -41,7 +41,7 @@ func (gs *gameService) AddGameToUser(ctx context.Context, req dto.AddGameRequest
 		if err!=nil{
 			return nil,err
 		}
-		user.Games=append(user.Games, game.Name)
+		user.Games=append(user.Games, game.Id)
 		game.NumberOfPlayers++
 		game.CalculateRating()
 		if err:=gs.GameRepository.Save(c,*game);err!=nil{
