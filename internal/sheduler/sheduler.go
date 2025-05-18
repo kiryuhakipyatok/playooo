@@ -25,10 +25,6 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 	}
 	cr := cron.New()
 	if _,err:=cr.AddFunc("@every 1m", func() {
-		select{
-			case <-stop:
-				s.Logger.Info("stopping sheduler")
-			default:
 				now := time.Now()
 				ctx1,cancel:=context.WithTimeout(context.Background(),time.Second*5)
 				defer cancel()
@@ -71,7 +67,6 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 					s.Logger.WithError(err).Errorf("failed to delete event: %v", err)
 				}
 			}
-		}
 	})
 	err!=nil{
 		s.Logger.WithError(err).Error("failed to add cron job")
@@ -79,7 +74,6 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 	}
 	cr.Start()
 	<-stop
-	s.Logger.Info("stopping scheduler...")
     if err := cr.Stop().Err(); err != nil {
         s.Logger.WithError(err).Error("error stopping scheduler")
     } else {
