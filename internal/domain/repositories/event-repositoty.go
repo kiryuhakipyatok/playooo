@@ -88,7 +88,7 @@ func (er *eventRepository) Delete(ctx context.Context, event entities.Event) err
 
 func (er *eventRepository) FetchUpcoming(ctx context.Context, time time.Time) ([]entities.Event, error) {
 	events := []entities.Event{}
-	rows,err:=er.DB.Query(ctx,"SELECT * FROM events where time >= $1",time)
+	rows,err:=er.DB.Query(ctx,"SELECT * FROM events where time <= $1",time)
 	if err!=nil{
 		return nil,err
 	}
