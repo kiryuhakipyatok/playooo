@@ -83,7 +83,7 @@ func (fh *FriendshipsHandler) GetFriends(c *fiber.Ctx) error{
 	defer cancel()
 	eH := errh.NewErrorHander(c, fh.Logger, "get-friends")
 	params:=dto.GetFriendsRequest{}
-	if err:=c.QueryParser(params);err!=nil{
+	if err:=c.QueryParser(&params);err!=nil{
 		return errh.ParseRequestError(eH,err)
 	}
 	if err:=fh.Validator.Struct(params);err!=nil{
@@ -194,7 +194,7 @@ func (fh *FriendshipsHandler) GetFriendsRequests(c *fiber.Ctx) error{
 	defer cancel()
 	eH := errh.NewErrorHander(c, fh.Logger, "get-friends-requests")
 	params:=dto.GetFriendsReqRequests{}
-	if err:=c.QueryParser(params);err!=nil{
+	if err:=c.QueryParser(&params);err!=nil{
 		return errh.ParseRequestError(eH,err)
 	}
 	if err:=fh.Validator.Struct(params);err!=nil{

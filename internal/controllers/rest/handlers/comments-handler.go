@@ -83,7 +83,7 @@ func (ch *CommentsHandler) GetComments(c *fiber.Ctx) error{
 	defer cancel()
 	eH:=errh.NewErrorHander(c,ch.Logger,"get-comments")
 	params:=dto.GetCommentsRequest{}
-	if err:=c.QueryParser(params);err!=nil{
+	if err:=c.QueryParser(&params);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
 	if err:=ch.Validator.Struct(params);err!=nil{

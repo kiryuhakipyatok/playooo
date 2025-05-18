@@ -259,14 +259,14 @@ func (eh *EventsHandler) GetFilteredEvents(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, eh.Logger, "get-filtered-events")
-	request := dto.EventsFilterRequest{}
-	if err := c.QueryParser(&request); err != nil {
+	params := dto.EventsFilterRequest{}
+	if err := c.QueryParser(&params); err != nil {
 		return errh.ParseRequestError(eH, err)
 	}
-	if err := eh.Validator.Struct(request); err != nil {
+	if err := eh.Validator.Struct(params); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	events, err := eh.EventService.GetFiltered(ctx, request)
+	events, err := eh.EventService.GetFiltered(ctx, params)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
@@ -296,18 +296,18 @@ func (eh *EventsHandler) GetSortedEvents(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, eh.Logger, "get-sorted-events")
-	request := dto.EventsSortRequest{}
-	if err := c.QueryParser(&request); err != nil {
+	params := dto.EventsSortRequest{}
+	if err := c.QueryParser(&params); err != nil {
 		return errh.ParseRequestError(eH, err)
 	}
-	if err := eh.Validator.Struct(request); err != nil {
+	if err := eh.Validator.Struct(params); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	request.Direction = strings.ToUpper(request.Direction)
-	if request.Direction == "" || request.Direction != "DESC" {
-		request.Direction = "ASC"
+	params.Direction = strings.ToUpper(params.Direction)
+	if params.Direction == "" || params.Direction != "DESC" {
+		params.Direction = "ASC"
 	}
-	events, err := eh.EventService.GetSorted(ctx, request)
+	events, err := eh.EventService.GetSorted(ctx, params)
 	if err!=nil{
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)

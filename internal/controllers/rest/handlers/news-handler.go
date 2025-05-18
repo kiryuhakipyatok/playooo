@@ -114,7 +114,7 @@ func(nh *NewsHandler) GetSomeNews(c *fiber.Ctx) error{
 	defer cancel()
 	eH := errh.NewErrorHander(c, nh.Logger, "get-news")
 	params:=dto.PaginationRequest{}
-	if err:=c.QueryParser(params);err!=nil{
+	if err:=c.QueryParser(&params);err!=nil{
 		return errh.ParseRequestError(eH,err)
 	}
 	if err:=nh.Validator.Struct(params);err!=nil{

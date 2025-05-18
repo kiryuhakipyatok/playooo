@@ -76,7 +76,7 @@ func(uh *UsersHandler) GetUsers(c *fiber.Ctx) error{
 	defer cancel()
 	eH := errh.NewErrorHander(c, uh.Logger, "get-user")
 	params:=dto.PaginationRequest{}
-	if err:=c.QueryParser(params);err!=nil{
+	if err:=c.QueryParser(&params);err!=nil{
 		return errh.ParseRequestError(eH,err)
 	}
 	if err:=uh.Validator.Struct(params);err!=nil{

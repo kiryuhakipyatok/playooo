@@ -122,7 +122,7 @@ func (gh *GamesHandler) GetGames(c *fiber.Ctx) error {
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "get-games")
 	params := dto.PaginationRequest{}
-	if err := c.QueryParser(params); err != nil {
+	if err := c.QueryParser(&params); err != nil {
 		return errh.ParseRequestError(eH, err)
 	}
 	if err := gh.Validator.Struct(params); err != nil {
@@ -189,14 +189,14 @@ func (gh *GamesHandler) GetFilteredGames(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "get-filtered-games")
-	request := dto.GamesFilterRequest{}
-	if err := c.QueryParser(&request); err != nil {
+	params := dto.GamesFilterRequest{}
+	if err := c.QueryParser(&params); err != nil {
 		return errh.ParseRequestError(eH, err)
 	}
-	if err := gh.Validator.Struct(request); err != nil {
+	if err := gh.Validator.Struct(params); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	games, err := gh.GameService.GetFiltered(ctx, request)
+	games, err := gh.GameService.GetFiltered(ctx, params)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
@@ -226,18 +226,18 @@ func (gh *GamesHandler) GetSortedGames(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "get-sorted-games")
-	request := dto.GamesSortRequest{}
-	if err := c.QueryParser(&request); err != nil {
+	params := dto.GamesSortRequest{}
+	if err := c.QueryParser(&params); err != nil {
 		return errh.ParseRequestError(eH, err)
 	}
-	if err := gh.Validator.Struct(request); err != nil {
+	if err := gh.Validator.Struct(params); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	request.Direction = strings.ToUpper(request.Direction)
-	if request.Direction == "" || request.Direction != "DESC" {
-		request.Direction = "ASC"
+	params.Direction = strings.ToUpper(params.Direction)
+	if params.Direction == "" || params.Direction != "DESC" {
+		params.Direction = "ASC"
 	}
-	games, err := gh.GameService.GetSorted(ctx, request)
+	games, err := gh.GameService.GetSorted(ctx, params)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)

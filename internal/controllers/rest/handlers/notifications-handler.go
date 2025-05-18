@@ -109,7 +109,7 @@ func (nh *NotificationsHandler) GetNotifications(c *fiber.Ctx) error {
 	defer cancel()
 	eH := errh.NewErrorHander(c, nh.Logger, "get-notifications")
 	params := dto.GetNotificationsRequest{}
-	if err:=c.QueryParser(params);err!=nil{
+	if err:=c.QueryParser(&params);err!=nil{
 		return errh.ParseRequestError(eH,err)
 	}
 	if err := nh.Validator.Struct(params); err != nil {
