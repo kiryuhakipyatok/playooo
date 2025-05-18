@@ -51,7 +51,7 @@ func (es *eventService)	CreateEvent(ctx context.Context, req dto.CreateEventRequ
 		if err!=nil{
 			return nil,err
 		}
-		game,err:=es.GameRepository.FindByName(c,req.Game)
+		game,err:=es.GameRepository.FindById(c,req.Game)
 		if err!=nil{
 			return nil,err
 		}
