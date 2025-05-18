@@ -15,7 +15,7 @@ type User struct {
 	TotalRating     int            `json:"total_rating"`
 	NumberOfRatings int            `json:"number_of_rating"`
 	Games           []string 	`json:"games"`
-	Password        []byte	       `json:"-"`
+	Password        string	       `json:"-"`
 	Avatar          string		`json:"avatar"`
 	Discord         string		`json:"discord"`
 	DateOfRegister 	time.Time  `json:"date_of_register"`

@@ -48,7 +48,7 @@ func (as *authService) Register(ctx context.Context,req dto.RegisterRequest) (*e
 		Id:       uuid.New(),
 		Login:    req.Login,
 		Telegram: req.Telegram,
-		Password: hashPassword,
+		Password: string(hashPassword),
 		DateOfRegister: time.Date(time.Now().Year(),time.Now().Month(),time.Now().Day(),0,0,0,0,time.Now().Location()),
 	}
 	if err := as.UserRepository.Create(ctx, user); err != nil {
@@ -65,7 +65,7 @@ func(as *authService) Login(ctx context.Context, req dto.LoginRequest) (*string,
 	if err != nil {
 		return nil,err
 	}
-	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(req.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return nil,err
 	}
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
