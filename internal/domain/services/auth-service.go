@@ -65,7 +65,7 @@ func(as *authService) Login(ctx context.Context, req dto.LoginRequest) (*string,
 	if err != nil {
 		return nil,err
 	}
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(req.Password)); err != nil {
 		return nil,err
 	}
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{

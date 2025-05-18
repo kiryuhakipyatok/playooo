@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"fmt"
+	//"fmt"
 	"sync"
 
 	// "crap/internal/bootstrap"
@@ -26,7 +26,6 @@ func Run() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(cfg)
 	logger := logger.NewLogger()
 	validator := validator.NewValidator()
 	stop := make(chan struct{}, 1)
