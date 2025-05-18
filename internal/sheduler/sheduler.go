@@ -35,7 +35,9 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 				for _, event := range upcoming {
 					if !event.NotificatedPre {
 					premsg := "cобытие " + event.Body + " начнется через 10 минут!"
-					s.NotificationService.CreateNotification(ctx1, event, premsg)
+					if err:=s.NotificationService.CreateNotification(ctx1, event, premsg);err!=nil{
+						s.Logger.WithError(err).Errorf("failed to create notification: %v",err)
+					}
 					if s.Bot!=nil{
 						if err := s.Bot.SendMsg(event, premsg); err != nil {
 							s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
@@ -56,7 +58,9 @@ func (s *Sheduler) SetupSheduler(stop chan struct{}) {
 				}
 				for _, event := range current {
 				curmsg := "cобытие " + event.Body + " началось!"
-				s.NotificationService.CreateNotification(ctx2, event, curmsg)
+				if err:=s.NotificationService.CreateNotification(ctx2, event, curmsg);err!=nil{
+					s.Logger.WithError(err).Errorf("failed to create notification: %v",err)
+				}
 				if s.Bot!=nil{
 					if err := s.Bot.SendMsg(event, curmsg); err != nil {
 						s.Logger.WithError(err).Errorf("error to send message to bot: %v", err)
