@@ -221,8 +221,8 @@ func (er *eventRepository) Filter(ctx context.Context, game,max,time string, amo
 
 func (er *eventRepository) Sort(ctx context.Context, field,dir string, amount, page int) ([]entities.Event, error){
 	events:=[]entities.Event{}
-	query:="SELECT * FROM events ORDER BY $1 $2 OFFSET $3 LIMIT $4"
-	rows,err:=er.DB.Query(ctx, query,field,dir,amount*page-amount,amount)
+	query:=fmt.Sprintf("SELECT * FROM events ORDER BY $1 %s OFFSET $2 LIMIT $3",dir)
+	rows,err:=er.DB.Query(ctx, query,field,amount*page-amount,amount)
 	if err!=nil{
 		return nil,err
 	}

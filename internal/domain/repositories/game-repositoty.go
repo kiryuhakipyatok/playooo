@@ -3,6 +3,8 @@ package repositories
 import (
 	"context"
 	"crap/internal/domain/entities"
+	"fmt"
+
 	"github.com/jackc/pgx/v5"
 )
 
@@ -85,8 +87,8 @@ func (gr *gameRepository) Filter(ctx context.Context, name string, amount, page 
 
 func (gr *gameRepository) Sort(ctx context.Context, field, dir string, amount, page int) ([]entities.Game, error){
 	games:=[]entities.Game{}
-	query:="SELECT * FROM games ORDER BY $1 $2 OFFSET $3 LIMIT $4"
-	rows,err:=gr.DB.Query(ctx, query,field,dir,amount*page-amount,amount)
+	query:=fmt.Sprintf("SELECT * FROM games ORDER BY $1 %s OFFSET $2 LIMIT $3",dir)
+	rows,err:=gr.DB.Query(ctx, query,field,amount*page-amount,amount)
 	if err!=nil{
 		return nil,err
 	}

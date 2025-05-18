@@ -120,7 +120,7 @@ type EventsFilterRequest struct{
 }
 
 type GamesSortRequest struct{
-	Field string `query:"field" validate:"required,oneof=events players rating"`
+	Field string `query:"field" validate:"required,oneof=number_of_events number_of_players rating"`
 	Direction string `query:"direction"`
 	PaginationRequest
 }
