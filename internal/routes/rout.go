@@ -31,90 +31,90 @@ func (rcfg *RoutConfig) Setup() {
 }
 
 func (rcfg *RoutConfig) SetupUserRoute() {
-	userGroup := rcfg.App.Group("/api/users")
+    userGroup := rcfg.App.Group("/api/users")
 
-	userGroup.Patch("/avatar", rcfg.UserHandler.UploadAvatar)
-	userGroup.Patch("/discord", rcfg.UserHandler.RecordDiscord)
-	userGroup.Patch("/rating", rcfg.UserHandler.EditRating)
+    userGroup.Get("/:id", rcfg.UserHandler.GetUser)
+    userGroup.Get("", rcfg.UserHandler.GetUsers)
 
-	userGroup.Delete("/avatar/:id", rcfg.UserHandler.DeleteAvatar)
+    userGroup.Patch("/avatar", rcfg.UserHandler.UploadAvatar)
+    userGroup.Patch("/discord", rcfg.UserHandler.RecordDiscord)
+    userGroup.Patch("/rating", rcfg.UserHandler.EditRating)
 
-	userGroup.Get("/:id", rcfg.UserHandler.GetUser)
-	userGroup.Get("", rcfg.UserHandler.GetUsers)
+    userGroup.Delete("/avatar/:id", rcfg.UserHandler.DeleteAvatar)
 }
 
 func (rcfg *RoutConfig) SetupFriendshipsRoute() {
-	friendshipGroup := rcfg.App.Group("/api/friends")
+    friendshipGroup := rcfg.App.Group("/api/friends")
 
-	friendshipGroup.Patch("", rcfg.FriendshipsHandler.AddFriend)
-	friendshipGroup.Patch("/accept", rcfg.FriendshipsHandler.AcceptFriendship)
+    friendshipGroup.Get("/requests", rcfg.FriendshipsHandler.GetFriendsRequests)
+    friendshipGroup.Get("", rcfg.FriendshipsHandler.GetFriends)
 
-	friendshipGroup.Delete("", rcfg.FriendshipsHandler.CancelFriendship)
+    friendshipGroup.Patch("/accept", rcfg.FriendshipsHandler.AcceptFriendship)
+    friendshipGroup.Patch("", rcfg.FriendshipsHandler.AddFriend)
 
-	friendshipGroup.Get("", rcfg.FriendshipsHandler.GetFriends)
-	friendshipGroup.Get("/requests", rcfg.FriendshipsHandler.GetFriendsRequests)
+    friendshipGroup.Delete("", rcfg.FriendshipsHandler.CancelFriendship)
 }
 
 func (rcfg *RoutConfig) SetupCommentRoute() {
-	commentGroup := rcfg.App.Group("/api/comments")
+    commentGroup := rcfg.App.Group("/api/comments")
 
-	commentGroup.Post("", rcfg.CommentsHandler.AddComment)
-
-	commentGroup.Get("", rcfg.CommentsHandler.GetComments)
+    commentGroup.Get("", rcfg.CommentsHandler.GetComments)
+    commentGroup.Post("", rcfg.CommentsHandler.AddComment)
 }
 
 func (rcfg *RoutConfig) SetupAuthRoute() {
-	authGroup := rcfg.App.Group("/api/auth")
+    authGroup := rcfg.App.Group("/api/auth")
 
-	authGroup.Post("/register", rcfg.AuthHandler.Register)
-	authGroup.Post("/login", rcfg.AuthHandler.Login)
-	authGroup.Post("/logout", rcfg.AuthHandler.Logout)
+    authGroup.Get("/profile", rcfg.AuthHandler.Profile)
 
-	authGroup.Get("/profile", rcfg.AuthHandler.Profile)
+    authGroup.Post("/register", rcfg.AuthHandler.Register)
+    authGroup.Post("/login", rcfg.AuthHandler.Login)
+    authGroup.Post("/logout", rcfg.AuthHandler.Logout)
 }
 
 func (rcfg *RoutConfig) SetupGameRoute() {
-	gameGroup := rcfg.App.Group("/api/games")
+    gameGroup := rcfg.App.Group("/api/games")
 
-	gameGroup.Patch("", rcfg.GameHandler.AddGame)
+    gameGroup.Get("/sort", rcfg.GameHandler.GetSortedGames)
+    gameGroup.Get("/filter", rcfg.GameHandler.GetFilteredGames)
+    gameGroup.Get("/:name", rcfg.GameHandler.GetGame)
+    gameGroup.Get("", rcfg.GameHandler.GetGames)
 
-	gameGroup.Delete("", rcfg.GameHandler.DeleteGame)
+    gameGroup.Patch("", rcfg.GameHandler.AddGame)
 
-	gameGroup.Get("/:name", rcfg.GameHandler.GetGame)
-	gameGroup.Get("/sort",rcfg.GameHandler.GetSortedGames)
-	gameGroup.Get("/filter",rcfg.GameHandler.GetFilteredGames)
-	gameGroup.Get("", rcfg.GameHandler.GetGames)
+    gameGroup.Delete("", rcfg.GameHandler.DeleteGame)
 }
 
 func (rcfg *RoutConfig) SetupEventRoute() {
-	eventsGroup := rcfg.App.Group("/api/events")
-	eventsGroup.Post("", rcfg.EventHandler.CreateEvent)
+    eventsGroup := rcfg.App.Group("/api/events")
 
-	eventsGroup.Patch("/join", rcfg.EventHandler.Join)
-	eventsGroup.Patch("/unjoin", rcfg.EventHandler.Unjoin)
+    eventsGroup.Get("/sort", rcfg.EventHandler.GetSortedEvents)
+    eventsGroup.Get("/filter", rcfg.EventHandler.GetFilteredEvents)
+    eventsGroup.Get("/:id", rcfg.EventHandler.GetEvent)
+    eventsGroup.Get("", rcfg.EventHandler.GetEvents)
 
-	eventsGroup.Get("/:id", rcfg.EventHandler.GetEvent)
-	eventsGroup.Get("/sort",rcfg.EventHandler.GetSortedEvents)
-	eventsGroup.Get("/filter",rcfg.EventHandler.GetFilteredEvents)
-	eventsGroup.Get("", rcfg.EventHandler.GetEvents)
+    eventsGroup.Patch("/join", rcfg.EventHandler.Join)
+    eventsGroup.Patch("/unjoin", rcfg.EventHandler.Unjoin)
+
+    eventsGroup.Post("", rcfg.EventHandler.CreateEvent)
 }
 
 func (rcfg *RoutConfig) SetupNewsRoute() {
-	newsGroup := rcfg.App.Group("/api/news")
+    newsGroup := rcfg.App.Group("/api/news")
 
-	newsGroup.Post("", rcfg.NewsHandler.CreateNews)
+    newsGroup.Get("/:id", rcfg.NewsHandler.GetNews)
+    newsGroup.Get("", rcfg.NewsHandler.GetSomeNews) // Fixed duplicate "/api/news" prefix
 
-	newsGroup.Get("/:id", rcfg.NewsHandler.GetNews)
-	newsGroup.Get("/api/news", rcfg.NewsHandler.GetSomeNews)
+    newsGroup.Post("", rcfg.NewsHandler.CreateNews)
 }
 
 func (cfg *RoutConfig) SetupNotificationsRoute() {
-	notificationsGroup := cfg.App.Group("/api/notifications")
+    notificationsGroup := cfg.App.Group("/api/notifications")
 
-	notificationsGroup.Delete("/:id", cfg.NoticeHandler.DeleteNotification)
-	notificationsGroup.Delete("/:id", cfg.NoticeHandler.DeleteAllNotifications)
+    notificationsGroup.Get("", cfg.NoticeHandler.GetNotifications)
 
-	notificationsGroup.Get("", cfg.NoticeHandler.GetNotifications)
+    notificationsGroup.Delete("/:id", cfg.NoticeHandler.DeleteNotification)
+    notificationsGroup.Delete("", cfg.NoticeHandler.DeleteAllNotifications) 
 }
 
 // func (cfg *RoutConfig) SetupSwaggerConfig() {
