@@ -87,8 +87,8 @@ func (gr *gameRepository) Filter(ctx context.Context, name string, amount, page 
 
 func (gr *gameRepository) Sort(ctx context.Context, field, dir string, amount, page int) ([]entities.Game, error){
 	games:=[]entities.Game{}
-	query:=fmt.Sprintf("SELECT * FROM games ORDER BY $1 %s OFFSET $2 LIMIT $3",dir)
-	rows,err:=gr.DB.Query(ctx, query,field,amount*page-amount,amount)
+	query:=fmt.Sprintf("SELECT * FROM games ORDER BY %s %s OFFSET $1 LIMIT $2",field,dir)
+	rows,err:=gr.DB.Query(ctx, query,amount*page-amount,amount)
 	if err!=nil{
 		return nil,err
 	}
