@@ -53,7 +53,6 @@ func(ah *AuthHandler) Register(c *fiber.Ctx) error{
 	if err:=ah.Validator.Struct(request);err!=nil{
 		return errh.ValidateRequestError(eH,err)
 	}
-	ah.Logger.Info(request)
 	user,err:=ah.AuthService.Register(ctx,request)
 	if err!=nil{
 		if errors.Is(err,context.DeadlineExceeded){
