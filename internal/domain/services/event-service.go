@@ -55,7 +55,7 @@ func (es *eventService)	CreateEvent(ctx context.Context, req dto.CreateEventRequ
 		if err!=nil{
 			return nil,err
 		}
-		if !slices.Contains(user.Games,game.Name){
+		if !slices.Contains(user.Games,game.Id){
 			return nil,errors.New("user does not have this game")
 		}
 		event:=entities.Event{
