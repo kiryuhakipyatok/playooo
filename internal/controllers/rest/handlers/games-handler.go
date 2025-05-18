@@ -189,14 +189,14 @@ func (gh *GamesHandler) GetFilteredGames(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, gh.Logger, "get-filtered-games")
-	request := &dto.GamesFilterRequest{}
-	if err := c.QueryParser(request); err != nil {
+	request := dto.GamesFilterRequest{}
+	if err := c.QueryParser(&request); err != nil {
 		return errh.ParseRequestError(eH, err)
 	}
 	if err := gh.Validator.Struct(request); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
-	games, err := gh.GameService.GetFiltered(ctx, *request)
+	games, err := gh.GameService.GetFiltered(ctx, request)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)

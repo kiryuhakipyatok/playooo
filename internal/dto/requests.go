@@ -3,8 +3,8 @@ package dto
 import "mime/multipart"
 
 type PaginationRequest struct {
-	Page   int `json:"page" validate:"required,gt=0"`
-	Amount int `json:"amount" validate:"required,gt=0"`
+	Page   int `query:"page" validate:"required,gt=0"`
+	Amount int `query:"amount" validate:"required,gt=0"`
 }
 
 type RegisterRequest struct {
@@ -50,12 +50,12 @@ type CancelFriendshipRequest struct{
 }
 
 type GetFriendsRequest struct{
-	UserId string `json:"user-id" validate:"required"`
+	UserId string `query:"user-id" validate:"required"`
 	PaginationRequest
 }
 
 type GetNotificationsRequest struct{
-	UserId string `json:"user-id" validate:"required"`
+	UserId string `query:"user-id" validate:"required"`
 	PaginationRequest
 }
 
@@ -78,8 +78,8 @@ type AddCommentRequest struct{
 }
 
 type GetCommentsRequest struct{
-	Whose string `json:"whose" validate:"required,max=5"`
-	UserId string `json:"user-id" validate:"required"`
+	Whose string `query:"whose" validate:"required,max=5"`
+	UserId string `query:"user-id" validate:"required"`
 	PaginationRequest
 }
 
@@ -108,25 +108,25 @@ type EditRatingRequest struct{
 }
 
 type GamesFilterRequest struct{
-	Name string `json:"game-name"`
+	Name string `query:"game-name"`
 	PaginationRequest
 }
 
 type EventsFilterRequest struct{
-	Game string `json:"game"`
-	Max string `json:"max"`
-	Time string `json:"time"`
+	Game string `query:"game"`
+	Max string `query:"max"`
+	Time string `query:"time"`
 	PaginationRequest
 }
 
 type GamesSortRequest struct{
-	Field string `json:"field" validate:"required,oneof=events players rating"`
-	Direction string `json:"direction"`
+	Field string `query:"field" validate:"required,oneof=events players rating"`
+	Direction string `query:"direction"`
 	PaginationRequest
 }
 
 type EventsSortRequest struct{
-	Field string `json:"field" validate:"required,oneof=max time"`
-	Direction string `json:"direction"`
+	Field string `query:"field" validate:"required,oneof=max time"`
+	Direction string `query:"direction"`
 	PaginationRequest
 }
