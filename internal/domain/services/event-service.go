@@ -77,7 +77,7 @@ func (es *eventService)	CreateEvent(ctx context.Context, req dto.CreateEventRequ
 		if err:=es.GameRepository.Save(c,*game);err!=nil{
 			return nil,err
 		}
-		return event,nil
+		return &event,nil
 	})
 	if err!=nil{
 		return nil,err

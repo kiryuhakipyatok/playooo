@@ -37,7 +37,7 @@ func NewNewsService(nr repositories.NewsRepository, t repositories.Transactor, c
 
 func (ns *newsService) CreateNews(ctx context.Context, req dto.CreateNewsRequest) (*entities.News, error){
 	res,err:=ns.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
-			news := entities.News{
+		news := entities.News{
 			Id:    uuid.New(),
 			Title: req.Title,
 			Body:  req.Body,
@@ -88,7 +88,7 @@ func (ns *newsService) CreateNews(ctx context.Context, req dto.CreateNewsRequest
 		if err := ns.NewsRepository.Create(c, news); err != nil {
 			return nil, err
 		}
-		return nil,nil
+		return &news,nil
 	})
 	if err!=nil{
 		return nil,err
