@@ -57,7 +57,7 @@ func (er *eventRepository) Create(ctx context.Context, event entities.Event) err
 }
 
 func (er *eventRepository) Save(ctx context.Context, event entities.Event) error {
-	if _,err := er.DB.Exec(ctx, "UPDATE events SET author_id=$1,body=$2,game=$3,max=$4,time=$5,notificated_pre=$6 WHERE id = $7", event.Body, event.Game, event.Max, event.Time, event.NotificatedPre,event.Id); err != nil {
+	if _,err := er.DB.Exec(ctx, "UPDATE events SET author_id=$1,body=$2,game=$3,max=$4,time=$5,notificated_pre=$6 WHERE id = $7",event.AuthorId,event.Body, event.Game, event.Max, event.Time, event.NotificatedPre,event.Id); err != nil {
 		return err
 	}
 	if er.Redis != nil {
