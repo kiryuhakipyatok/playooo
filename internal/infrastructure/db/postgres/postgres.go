@@ -11,7 +11,7 @@ import (
 
 
 func Connect(cfg *config.Config) (*pgx.Conn, error){
-	url:=fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+	url:=fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&timezone=Europe/Moscow",
 		cfg.Postgres.User,
 		cfg.Postgres.Password,
 		cfg.Postgres.Host,
