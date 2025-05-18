@@ -18,8 +18,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --from=builder /usr/local/src/bin/app /app
 
-COPY config/config.yaml /config/config.yaml
-
 EXPOSE 8080
 
 CMD ["/app"]
