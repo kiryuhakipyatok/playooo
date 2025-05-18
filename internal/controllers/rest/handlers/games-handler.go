@@ -196,6 +196,7 @@ func (gh *GamesHandler) GetFilteredGames(c *fiber.Ctx) error {
 	if err := gh.Validator.Struct(params); err != nil {
 		return errh.ValidateRequestError(eH, err)
 	}
+	gh.Logger.Infof("params: %+v",params)
 	games, err := gh.GameService.GetFiltered(ctx, params)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
