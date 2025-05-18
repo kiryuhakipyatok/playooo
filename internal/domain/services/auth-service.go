@@ -7,6 +7,7 @@ import (
 	"crap/internal/domain/repositories"
 	"crap/internal/dto"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -65,6 +66,8 @@ func(as *authService) Login(ctx context.Context, req dto.LoginRequest) (*string,
 	if err != nil {
 		return nil,err
 	}
+	fmt.Println(user.Password)
+	fmt.Println([]byte(user.Password))
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return nil,err
 	}
