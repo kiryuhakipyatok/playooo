@@ -87,19 +87,19 @@ func(cs *commentService) GetComments(ctx context.Context, req dto.GetCommentsReq
 	switch req.Whose{
 	case "user":
 		var err error
-		comments,err=cs.CommentRepository.FetchFromUser(ctx,req.UserId,req.Amount,req.Page)
+		comments,err=cs.CommentRepository.FetchFromUser(ctx,req.Id,req.Amount,req.Page)
 		if err!=nil{
 			return nil,err
 		}
 	case "event":
 		var err error
-		comments,err=cs.CommentRepository.FetchFromEvent(ctx,req.UserId,req.Amount,req.Page)
+		comments,err=cs.CommentRepository.FetchFromEvent(ctx,req.Id,req.Amount,req.Page)
 		if err!=nil{
 			return nil,err
 		}
 	case "news":
 		var err error
-		comments,err=cs.CommentRepository.FetchFromNews(ctx,req.UserId,req.Amount,req.Page)
+		comments,err=cs.CommentRepository.FetchFromNews(ctx,req.Id,req.Amount,req.Page)
 		if err!=nil{
 			return nil,err
 		}

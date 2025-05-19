@@ -61,6 +61,7 @@ func (gh *GamesHandler) AddGame(c *fiber.Ctx) error {
 			"error": "failed to add game: " + err.Error(),
 		})
 	}
+	gh.Logger.Infof("game %s added to user %v", request.Game,request.UserId)
 	return c.JSON(fiber.Map{
 		"message": "success",
 	})
@@ -99,6 +100,7 @@ func (gh *GamesHandler) DeleteGame(c *fiber.Ctx) error {
 			"error": "failed to delete game: " + err.Error(),
 		})
 	}
+	gh.Logger.Infof("game %s deleted from user %v", request.Game,request.UserId)
 	return c.JSON(fiber.Map{
 		"message": "success",
 	})
@@ -138,6 +140,7 @@ func (gh *GamesHandler) GetGames(c *fiber.Ctx) error {
 			"error": "failed to get games: " + err.Error(),
 		})
 	}
+	gh.Logger.Infof("games received: %v", params.Amount)
 	return c.JSON(games)
 }
 
@@ -169,6 +172,7 @@ func (gh *GamesHandler) GetGame(c *fiber.Ctx) error {
 			"error": "failed to get game: " + err.Error(),
 		})
 	}
+	gh.Logger.Infof("game received: %v", title)
 	return c.JSON(game)
 }
 
@@ -207,6 +211,7 @@ func (gh *GamesHandler) GetFilteredGames(c *fiber.Ctx) error {
 			"error": "failed to fetch filtered games: " + err.Error(),
 		})
 	}
+	gh.Logger.Infof("filtered games received: %v", params.Amount)
 	return c.JSON(games)
 }
 
@@ -248,5 +253,6 @@ func (gh *GamesHandler) GetSortedGames(c *fiber.Ctx) error {
 			"error": "failed to fetch sorted games: " + err.Error(),
 		})
 	}
+	gh.Logger.Infof("sorted games received: %v", params.Amount)
 	return c.JSON(games)
 }

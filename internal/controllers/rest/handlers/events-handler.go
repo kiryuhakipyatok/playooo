@@ -62,11 +62,7 @@ func (eh *EventsHandler) CreateEvent(c *fiber.Ctx) error {
 			"error": "failed to create event: " + err.Error(),
 		})
 	}
-	// responce:=dto.EventResponse{
-	// 	Id: event.Id,
-	// 	AuthorId: event.AuthorId,
-	// 	Time: event.Time,
-	// }
+	eh.Logger.Infof("event created: %v",event.Id)
 	return c.JSON(event)
 }
 
@@ -96,6 +92,7 @@ func (eh *EventsHandler) GetEvent(c *fiber.Ctx) error {
 			"error": "failed to get event: " + err.Error(),
 		})
 	}
+	eh.Logger.Infof("event received: %v",event.Id)
 	return c.JSON(event)
 }
 
@@ -132,6 +129,7 @@ func (eh *EventsHandler) GetEvents(c *fiber.Ctx) error {
 			"error": "failed to get events: " + err.Error(),
 		})
 	}
+	eh.Logger.Infof("events received: %v",params.Amount)
 	return c.JSON(events)
 }
 
@@ -161,6 +159,7 @@ func (eh *EventsHandler) DeleteEvent(c *fiber.Ctx) error {
 			"error": "failed to delete event: " + err.Error(),
 		})
 	}
+	eh.Logger.Infof("event deleted: %v",id)
 	return c.JSON(fiber.Map{
 		"message": "success",
 	})
@@ -199,6 +198,7 @@ func (eh *EventsHandler) Join(c *fiber.Ctx) error {
 			"error": "failed to join to event: " + err.Error(),
 		})
 	}
+	eh.Logger.Infof("user %v joined to event %v",request.UserId,request.EventId)
 	return c.JSON(fiber.Map{
 		"message": "success",
 	})
@@ -237,6 +237,7 @@ func (eh *EventsHandler) Unjoin(c *fiber.Ctx) error {
 			"error": "failed to unjoin from event: " + err.Error(),
 		})
 	}
+	eh.Logger.Infof("user %v unjoined from event %v",request.UserId,request.EventId)
 	return c.JSON(fiber.Map{
 		"message": "success",
 	})
@@ -276,6 +277,7 @@ func (eh *EventsHandler) GetFilteredEvents(c *fiber.Ctx) error {
 			"error": "failed to fetch filtered events: " + err.Error(),
 		})
 	}
+	eh.Logger.Infof("filtered events received: %v",params.Amount)
 	return c.JSON(events)
 }
 
@@ -317,5 +319,6 @@ func (eh *EventsHandler) GetSortedEvents(c *fiber.Ctx) error {
 			"error": "failed to fetch sorted events: " + err.Error(),
 		})
 	}
+	eh.Logger.Infof("sorted events received: %v",params.Amount)
 	return c.JSON(events)
 }

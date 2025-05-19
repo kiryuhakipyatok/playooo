@@ -63,6 +63,7 @@ func(nh *NewsHandler) CreateNews(c *fiber.Ctx) error {
 		Id: news.Id,
 		Title: news.Title,
 	}
+	nh.Logger.Infof("news created: %v", news.Id)
 	return c.JSON(&responce)
 }
 
@@ -94,6 +95,7 @@ func(nh *NewsHandler) GetNews(c *fiber.Ctx) error{
 			"error":"failed to get news: "+ err.Error(),
 		})
 	}
+	nh.Logger.Infof("news received: %v", news.Id)
 	return c.JSON(news)
 }
 
@@ -130,5 +132,6 @@ func(nh *NewsHandler) GetSomeNews(c *fiber.Ctx) error{
 			"error":"failed to get some news: "+ err.Error(),
 		})
 	}
+	nh.Logger.Infof("some news received: %v", params.Amount)
 	return c.JSON(someNews)
 }

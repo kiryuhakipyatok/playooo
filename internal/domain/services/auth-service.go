@@ -17,7 +17,7 @@ import (
 
 type AuthService interface {
 	Register(ctx context.Context,req dto.RegisterRequest) (*entities.User, error)
-	Login(ctx context.Context, req dto.LoginRequest) (*string, error)
+	Login(ctx context.Context, req dto.LoginRequest) (string, error)
 	Profile(ctx context.Context, claims string) (*entities.User, error)
 }
 
@@ -58,28 +58,29 @@ func (as *authService) Register(ctx context.Context,req dto.RegisterRequest) (*e
 	return &user, nil
 }
 
-func(as *authService) Login(ctx context.Context, req dto.LoginRequest) (*string,error){
+func(as *authService) Login(ctx context.Context, req dto.LoginRequest) (string,error){
 	if as.Config.Auth.Secret == "" {
-		return nil,errors.New("error secret .env value is empty")
+		return "",errors.New("error secret .env value is empty")
 	}
 	user, err := as.UserRepository.FindBy(ctx,"login", req.Login)
 	if err != nil {
-		return nil,err
+		return "",err
 	}
 	fmt.Println(user.Password)
 	fmt.Println([]byte(user.Password))
 	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(req.Password)); err != nil {
-		return nil,err
+		return "",err
 	}
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Issuer:    user.Id.String(),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
-	})
-	token, err := claims.SignedString([]byte(as.Config.Auth.Secret))
+	playload:=jwt.MapClaims{
+		"sub": user.Id.String(),
+		"exp":jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+	}
+	token:= jwt.NewWithClaims(jwt.SigningMethodHS256, playload)
+	t, err := token.SignedString([]byte(as.Config.Auth.Secret))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return &token, nil
+	return t, nil
 }
 
 func (as *authService) Profile(ctx context.Context, claims string) (*entities.User, error) {

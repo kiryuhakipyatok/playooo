@@ -60,6 +60,7 @@ func (fh *FriendshipsHandler) AddFriend(c *fiber.Ctx) error {
 			"error":"failed to add friend: "+ err.Error(),
 		})
 	}
+	fh.Logger.Infof("user %v added user %v to friendship",request.UserId,request.FriendLogin)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -99,6 +100,7 @@ func (fh *FriendshipsHandler) GetFriends(c *fiber.Ctx) error{
 			"error":"failed to get friends: "+ err.Error(),
 		})
 	}
+	fh.Logger.Infof("friends received: %v",params.Amount)
 	return c.JSON(friends)
 }
 
@@ -135,6 +137,7 @@ func (fh *FriendshipsHandler) CancelFriendship(c *fiber.Ctx) error{
 			"error":"failed to cancel friendship: "+ err.Error(),
 		})
 	}
+	fh.Logger.Infof("user %v cancel friendship with user %v",request.UserId,request.FriendId)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -172,6 +175,7 @@ func (fh *FriendshipsHandler) AcceptFriendship(c *fiber.Ctx) error{
 			"error": "failed to accept friendship: "+ err.Error(),
 		})
 	}
+	fh.Logger.Infof("user %v accept user %v in friendships",request.UserId,request.FriendId)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -210,5 +214,6 @@ func (fh *FriendshipsHandler) GetFriendsRequests(c *fiber.Ctx) error{
 			"error":"failed to get friend request: "+ err.Error(),
 		})
 	}
+	fh.Logger.Infof("friends requests received: %v",params.Amount)
 	return c.JSON(requests)
 }

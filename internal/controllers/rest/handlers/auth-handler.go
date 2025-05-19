@@ -106,14 +106,15 @@ func (ah *AuthHandler) Login(c *fiber.Ctx) error{
 			"error": "login failed: " + err.Error(),
 		})
 	}
-	jwt:=fiber.Cookie{
+	jwtCookie:=fiber.Cookie{
 		Name: "jwt",
-		Value: *token,
+		Value: token,
 		Expires: time.Now().Add(time.Hour*24),
 		HTTPOnly: true,
 		SameSite: "Lax",
 	}
-	c.Cookie(&jwt)
+	c.Cookie(&jwtCookie)
+	ah.Logger.Infof("user logined: %v",request.Login)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -182,5 +183,6 @@ func(ah *AuthHandler) Profile(c *fiber.Ctx) error{
 			"error": "not found",
 		})
 	}
+	ah.Logger.Infof("profile received: %v",user.Id)
 	return c.JSON(user)
 }

@@ -79,7 +79,7 @@ type AddCommentRequest struct{
 
 type GetCommentsRequest struct{
 	Whose string `query:"whose" validate:"required,max=5"`
-	UserId string `query:"user-id" validate:"required"`
+	Id string `query:"id" validate:"required"`
 	PaginationRequest
 }
 

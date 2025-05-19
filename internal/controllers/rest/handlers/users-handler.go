@@ -55,6 +55,7 @@ func(uh *UsersHandler) GetUser(c *fiber.Ctx) error {
 			"error": "failed to get user: " + err.Error(),
 		})
 	}
+	uh.Logger.Infof("user received: %v", user.Id)
 	return c.JSON(user)
 }
 
@@ -92,6 +93,7 @@ func(uh *UsersHandler) GetUsers(c *fiber.Ctx) error{
 			"error": "failed to get users: " + err.Error(),
 		})
 	}
+	uh.Logger.Infof("users received: %v", params.Amount)
 	return c.JSON(users)
 }
 
@@ -138,7 +140,7 @@ func(uh *UsersHandler) UploadAvatar(c *fiber.Ctx) error{
 			"error": "failed to upload avatar: " + err.Error(),
 		})
 	}
-	uh.Logger.Info("user's avatar uploaded successfully")
+	uh.Logger.Infof("avatar uploaded: %v",request.UserId)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -177,6 +179,7 @@ func(uh *UsersHandler) RecordDiscord(c *fiber.Ctx) error{
 			"error": "failed to record discord: " + err.Error(),
 		})
 	}
+	uh.Logger.Infof("discord recorded: %v", request.UserId)
 	return c.JSON(fiber.Map{
 		"message":"succes",
 	})
@@ -209,6 +212,7 @@ func(uh *UsersHandler) DeleteAvatar(c *fiber.Ctx) error{
 			"error": "failed to delete avatar: " + err.Error(),
 		})
 	}
+	uh.Logger.Infof("avatar deleted: %v", id)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -247,6 +251,7 @@ func(uh *UsersHandler) EditRating(c *fiber.Ctx) error{
 			"error": "failed to edit rating: " + err.Error(),
 		})
 	}
+	uh.Logger.Infof("rating edited: %v", request.UserId)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})

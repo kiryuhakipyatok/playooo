@@ -60,6 +60,7 @@ func (ch *CommentsHandler) AddComment(c *fiber.Ctx) error{
 			"error":"failed to add comment: " + err.Error(),
 		})
 	}
+	ch.Logger.Infof("comment added: %s",comment.Id)
 	return c.JSON(comment)
 }
 
@@ -99,6 +100,7 @@ func (ch *CommentsHandler) GetComments(c *fiber.Ctx) error{
 			"error":"failed to get comments: " + err.Error(),
 		})
 	}
+	ch.Logger.Infof("comments recieved: %s",params.Id)
 	return c.JSON(comments)
 }
 

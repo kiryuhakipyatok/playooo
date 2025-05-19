@@ -54,6 +54,7 @@ func (nh *NotificationsHandler) DeleteNotification(c *fiber.Ctx) error {
 			"error": "failed to delete notification: " + err.Error(),
 		})
 	}
+	nh.Logger.Infof("notification deleted: %v",id)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -86,6 +87,7 @@ func (nh *NotificationsHandler) DeleteAllNotifications(c *fiber.Ctx) error {
 			"error": "failed to delete all notifications: " + err.Error(),
 		})
 	}
+	nh.Logger.Infof("all notifications deleted: %v",id)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
@@ -125,6 +127,7 @@ func (nh *NotificationsHandler) GetNotifications(c *fiber.Ctx) error {
 			"error": "failed to get notifications: " + err.Error(),
 		})
 	}
+	nh.Logger.Infof("notification received: %v",params.Amount)
 	return c.JSON(notifications)
 }
 
