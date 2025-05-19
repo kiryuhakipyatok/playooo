@@ -113,8 +113,8 @@ func (cfg *RoutConfig) SetupNotificationsRoute() {
 
     notificationsGroup.Get("", cfg.NoticeHandler.GetNotifications)
 
-    notificationsGroup.Delete("/:id", cfg.NoticeHandler.DeleteNotification)
-    notificationsGroup.Delete("", cfg.NoticeHandler.DeleteAllNotifications) 
+    notificationsGroup.Delete("/all/:id", cfg.NoticeHandler.DeleteAllNotifications) 
+    notificationsGroup.Delete("", cfg.NoticeHandler.DeleteNotification)
 }
 
 // func (cfg *RoutConfig) SetupSwaggerConfig() {

@@ -130,3 +130,8 @@ type EventsSortRequest struct{
 	Direction string `query:"direction"`
 	PaginationRequest
 }
+
+type DeleteNotificationRequest struct{
+	UserId string `json:"user-id" validate:"required"`
+	NotificationId string `json:"notification-id" validate:"required"`
+}

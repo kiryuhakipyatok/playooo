@@ -7,7 +7,6 @@ import (
 	errh "crap/pkg/errors-handlers"
 	"errors"
 	"time"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -44,9 +43,14 @@ func (nh *NotificationsHandler) DeleteNotification(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, nh.Logger, "delete-notification")
-	id := c.Query("id")
-	nid := c.Query("nid")
-	if err := nh.NotificationService.DeleteNotification(ctx, id, nid); err != nil {
+	request:=dto.DeleteNotificationRequest{}
+	if err:=c.QueryParser(&request);err!=nil{
+		return errh.ParseRequestError(eH,err)
+	}
+	if err := nh.Validator.Struct(request); err != nil {
+		return errh.ValidateRequestError(eH, err)
+	}
+	if err := nh.NotificationService.DeleteNotification(ctx, request.UserId, request.NotificationId); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}
@@ -55,7 +59,7 @@ func (nh *NotificationsHandler) DeleteNotification(c *fiber.Ctx) error {
 			"error": "failed to delete notification: " + err.Error(),
 		})
 	}
-	nh.Logger.Infof("notification deleted: %v",id)
+	nh.Logger.Infof("notification deleted: %v",request.NotificationId)
 	return c.JSON(fiber.Map{
 		"message":"success",
 	})
