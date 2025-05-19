@@ -44,7 +44,7 @@ func (nr *notificationRepository) CreateForUsers(ctx context.Context, notificati
 }
 
 func (nr *notificationRepository) Delete(ctx context.Context, id, nid string) error {
-	if _,err:=nr.DB.Exec(ctx,"DELETE FROM users_notifications WHERE user_id = $1 AND notification_id=$2)",id,nid);err!=nil{
+	if _,err:=nr.DB.Exec(ctx,"DELETE FROM users_notifications WHERE user_id = $1 AND notification_id=$2",id,nid);err!=nil{
 		return err
 	}
 	return nil
