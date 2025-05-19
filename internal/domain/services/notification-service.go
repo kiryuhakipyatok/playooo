@@ -75,7 +75,7 @@ func (ns *notificationService) DeleteNotification(ctx context.Context, id, nid s
 		if err!=nil{
 			return nil,err
 		}
-		notification,err:=ns.NotificationRepository.FindById(c,id)
+		notification,err:=ns.NotificationRepository.FindById(c,nid)
 		if err!=nil{
 			return nil,err
 		}
