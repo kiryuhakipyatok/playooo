@@ -67,7 +67,7 @@ func (nr *notificationRepository) FindById(ctx context.Context, id string) (*ent
 
 func (nr *notificationRepository) Fetch(ctx context.Context,id string, amount, page int) ([]entities.Notification, error){
 	notifications:=[]entities.Notification{}
-	query:="SELECT * FROM notifications n JOIN users_notifications un ON un.notification_id = n.id WHERE un.user_id = $1 ORDER BY n.time OFFSET $2 LIMIT $3"
+	query:="SELECT n.id,n.event_id,n.body,n.time FROM notifications n JOIN users_notifications un ON un.notification_id = n.id WHERE un.user_id = $1 ORDER BY n.time OFFSET $2 LIMIT $3"
 	rows,err:=nr.DB.Query(ctx,query,id,page*amount-amount,amount)
 	if err!=nil{
 		return nil,err
