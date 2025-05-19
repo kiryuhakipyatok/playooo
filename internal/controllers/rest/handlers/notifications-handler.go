@@ -44,8 +44,9 @@ func (nh *NotificationsHandler) DeleteNotification(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), time.Second*5)
 	defer cancel()
 	eH := errh.NewErrorHander(c, nh.Logger, "delete-notification")
-	id := c.Params("id")
-	if err := nh.NotificationService.DeleteNotification(ctx, id); err != nil {
+	id := c.Query("id")
+	nid := c.Query("nid")
+	if err := nh.NotificationService.DeleteNotification(ctx, id, nid); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return errh.RequestTimedOut(eH, err)
 		}

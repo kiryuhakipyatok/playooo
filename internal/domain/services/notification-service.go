@@ -12,7 +12,7 @@ import (
 
 type NotificationService interface {
 	CreateNotification(ctx context.Context, event entities.Event, msg string) error
-	DeleteNotification(ctx context.Context, id string) error
+	DeleteNotification(ctx context.Context, id, nid string) error
 	FetchNotifications(ctx context.Context, req dto.GetNotificationsRequest) ([]entities.Notification, error)
 	DeleteAllNotifications(ctx context.Context, id string) error
 }
@@ -39,6 +39,15 @@ func NewNotificationService(
 
 func (ns *notificationService) CreateNotification(ctx context.Context, event entities.Event, msg string) error{
 	_,err:=ns.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
+		notification:=entities.Notification{
+			Id: uuid.New(),
+			EventId: event.Id,
+			Body: msg,
+			Time: time.Now(),
+		}
+		if err:=ns.NotificationRepository.Create(ctx, notification);err!=nil{
+			return nil,err
+		}
 		members,err:=ns.EventRepository.FetchMembers(c,event.Id.String())
 		if err!=nil{
 			return nil,err
@@ -48,14 +57,7 @@ func (ns *notificationService) CreateNotification(ctx context.Context, event ent
 			if err!=nil{
 				return nil,err
 			}
-			notification:=entities.Notification{
-				Id: uuid.New(),
-				UserId: user.Id,
-				EventId: event.Id,
-				Body: msg,
-				Time: time.Now(),
-			}
-			if err:=ns.NotificationRepository.Create(c,notification);err!=nil{
+			if err:=ns.NotificationRepository.CreateForUsers(c,notification,user.Id.String());err!=nil{
 				return nil,err
 			}
 		}
@@ -67,13 +69,17 @@ func (ns *notificationService) CreateNotification(ctx context.Context, event ent
 	return nil
 }
 
-func (ns *notificationService) DeleteNotification(ctx context.Context, id string) error{
+func (ns *notificationService) DeleteNotification(ctx context.Context, id, nid string) error{
 	_,err:=ns.Transactor.WithinTransaction(ctx,func(c context.Context) (any, error) {
+		user,err:=ns.UserRepository.FindById(ctx,id)
+		if err!=nil{
+			return nil,err
+		}
 		notification,err:=ns.NotificationRepository.FindById(c,id)
 		if err!=nil{
 			return nil,err
 		}
-		if err:=ns.NotificationRepository.DeleteById(c,notification.Id.String());err!=nil{
+		if err:=ns.NotificationRepository.Delete(c,user.Id.String(),notification.Id.String());err!=nil{
 			return nil,err
 		}
 		return nil,nil
@@ -101,7 +107,7 @@ func (ns *notificationService) DeleteAllNotifications(ctx context.Context, id st
 	if err!=nil{
 		return err
 	}
-	if err:=ns.NotificationRepository.DeleteByUserId(ctx,user.Id.String());err!=nil{
+	if err:=ns.NotificationRepository.DeleteAll(ctx,user.Id.String());err!=nil{
 		return err
 	}
 	return nil

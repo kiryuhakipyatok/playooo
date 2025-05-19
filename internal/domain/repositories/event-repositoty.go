@@ -156,7 +156,7 @@ func (er *eventRepository) Fetch(ctx context.Context, amount, page int) ([]entit
 }
 
 func (er *eventRepository) Join(ctx context.Context,user_id,event_id string) error{
-	if _,err:=er.DB.Exec(ctx,"INSERT INTO users_events (event_id,user_id) values($1,$2)",event_id,user_id);err!=nil{
+	if _,err:=er.DB.Exec(ctx,"INSERT INTO users_events (user_id,event_id) values($1,$2)",user_id,event_id);err!=nil{
 		return err
 	}
 	return nil

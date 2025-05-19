@@ -139,7 +139,7 @@ func (es *eventService)	Join(ctx context.Context, req dto.JoinToEventRequest) er
 		if err!=nil{
 			return nil,err
 		}
-		event,err:=es.EventRepository.FindById(c,req.UserId)
+		event,err:=es.EventRepository.FindById(c,req.EventId)
 		if err!=nil{
 			return nil,err
 		}
