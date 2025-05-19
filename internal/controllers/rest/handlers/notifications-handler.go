@@ -44,7 +44,7 @@ func (nh *NotificationsHandler) DeleteNotification(c *fiber.Ctx) error {
 	defer cancel()
 	eH := errh.NewErrorHander(c, nh.Logger, "delete-notification")
 	request:=dto.DeleteNotificationRequest{}
-	if err:=c.QueryParser(&request);err!=nil{
+	if err:=c.BodyParser(&request);err!=nil{
 		return errh.ParseRequestError(eH,err)
 	}
 	if err := nh.Validator.Struct(request); err != nil {
