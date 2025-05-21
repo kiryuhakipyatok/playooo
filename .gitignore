@@ -4,7 +4,7 @@ config.yaml
 
 /files
 
-.db
+/.db
 
 logrus.log
 
