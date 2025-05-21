@@ -22,7 +22,7 @@ import (
 )
 
 func Run() {
-	cfg, err := config.LoadConfig()
+	cfg, err := config.LoadConfig("config")
 	if err != nil {
 		panic(err)
 	}
