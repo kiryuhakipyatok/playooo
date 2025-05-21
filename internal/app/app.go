@@ -7,7 +7,7 @@ import (
 
 	// "crap/internal/bootstrap"
 	"crap/internal/bootstrap"
-	"crap/internal/config"
+	"crap/config"
 	p "crap/internal/infrastructure/db/postgres"
 	r "crap/internal/infrastructure/db/redis"
 	"crap/internal/infrastructure/server"
@@ -22,7 +22,7 @@ import (
 )
 
 func Run() {
-	cfg, err := config.LoadConfig("config")
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
 	}
@@ -62,7 +62,7 @@ func Run() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		if err := app.Listen("0.0.0.0"+ ":" + cfg.Server.Port); err != nil {
+		if err := app.Listen(cfg.Server.Host + cfg.Server.Port); err != nil {
 			logger.WithError(err).Fatal("failed to start server")
 		}
 	}()

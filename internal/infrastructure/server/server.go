@@ -1,7 +1,7 @@
 package server
 
 import (
-	"crap/internal/config"
+	"crap/config"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/jwt/v3"

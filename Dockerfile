@@ -2,11 +2,13 @@ FROM golang:1.24-alpine AS builder
 
 WORKDIR /usr/local/src
 
-COPY go.mod go.sum ./
+COPY ["go.mod","go.sum","./"]
 
 RUN go mod download
 
-COPY . .
+COPY . ./
+
+COPY config/config.yaml /tmp/config.yaml
 
 RUN go build -o ./bin/app cmd/app/main.go
 
@@ -16,8 +18,13 @@ RUN apk add --no-cache tzdata
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-COPY --from=builder /usr/local/src/bin/app /app
+RUN mkdir -p /config
 
-EXPOSE 8080
+COPY --from=builder /usr/local/src/bin/app /
+COPY --from=builder /tmp/config.yaml /config/config.yaml
+COPY .env /.env
+COPY files /files
+
+EXPOSE 1111
 
 CMD ["/app"]
