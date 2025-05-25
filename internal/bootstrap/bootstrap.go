@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"crap/internal/config"
+	"crap/config"
 	"crap/internal/controllers/rest/handlers"
 	"crap/internal/domain/repositories"
 	"crap/internal/domain/services"

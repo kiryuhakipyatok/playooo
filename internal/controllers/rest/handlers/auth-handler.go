@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"crap/internal/config"
+	"crap/config"
 	"crap/internal/domain/services"
 	"crap/internal/dto"
 	errh "crap/pkg/errors-handlers"

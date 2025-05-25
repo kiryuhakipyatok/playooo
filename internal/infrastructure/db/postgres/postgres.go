@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"crap/internal/config"
+	"crap/config"
 	"fmt"
 	"time"
 	"github.com/jackc/pgx/v5"

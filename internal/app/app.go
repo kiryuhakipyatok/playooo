@@ -7,7 +7,7 @@ import (
 
 	// "crap/internal/bootstrap"
 	"crap/internal/bootstrap"
-	"crap/internal/config"
+	"crap/config"
 	p "crap/internal/infrastructure/db/postgres"
 	r "crap/internal/infrastructure/db/redis"
 	"crap/internal/infrastructure/server"
