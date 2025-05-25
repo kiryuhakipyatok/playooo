@@ -3,8 +3,9 @@ package config
 import (
 	// "fmt"
 	// "github.com/spf13/viper"
-	// "log"
-	"github.com/caarlos0/env/v11"
+	"log"
+	"github.com/spf13/viper"
+	//"github.com/caarlos0/env/v11"
 )
 
 type Config struct{
@@ -49,29 +50,28 @@ type AuthCfg struct{
 }
 
 
-func LoadConfig() (*Config, error) {
-	cfg := Config{}
-	if err := env.Parse(&cfg); err != nil {
-		return nil, err
+// func LoadConfig() (*Config, error) {
+// 	cfg := Config{}
+// 	if err := env.Parse(&cfg); err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &cfg, nil
+// }
+func LoadConfig() (*Config,error){
+	v:=viper.New()
+	v.SetConfigName("config")
+	v.AddConfigPath("../../config")  
+	v.AutomaticEnv()
+	if err:=v.ReadInConfig();err!=nil{
+		log.Printf("error reading config file: %v\n",err)
+		return nil,err
+	}
+	cfg:=Config{}
+	if err:=v.Unmarshal(&cfg);err!=nil{
+		log.Printf("error unmarshaling config file: %v\n",err)
+		return nil,err
 	}
 
-	return &cfg, nil
+	return &cfg,nil
 }
-// func LoadConfig(filename string) (Config,error){
-// 	v:=viper.New()
-
-// 	v.SetConfigName(fmt.Sprintf("config/%s",filename))
-// 	v.AddConfigPath("../../internal/")
-// 	v.AutomaticEnv()
-// 	if err:=v.ReadInConfig();err!=nil{
-// 		log.Printf("error reading config file: %v\n",err)
-// 		return Config{},err
-// 	}
-// 	cfg:=Config{}
-// 	if err:=v.Unmarshal(&cfg);err!=nil{
-// 		log.Printf("error unmarshaling config file: %v\n",err)
-// 		return Config{},err
-// 	}
-
-// 	return cfg,nil
-// }
