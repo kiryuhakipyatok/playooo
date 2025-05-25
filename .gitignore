@@ -1,8 +1,9 @@
-
 .env
 
-*.yaml
+config.yaml
 
 /files
+
+/.db
 
 logrus.log
