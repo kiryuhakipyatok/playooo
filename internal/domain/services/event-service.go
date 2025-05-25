@@ -82,6 +82,8 @@ func (es *eventService)	CreateEvent(ctx context.Context, req dto.CreateEventRequ
 	if err!=nil{
 		return nil,err
 	}
+
+
 	return res.(*entities.Event),nil
 }
 

@@ -63,6 +63,7 @@ func (eh *EventsHandler) CreateEvent(c *fiber.Ctx) error {
 		})
 	}
 	eh.Logger.Infof("event created: %v",event.Id)
+	
 	return c.JSON(event)
 }
 
