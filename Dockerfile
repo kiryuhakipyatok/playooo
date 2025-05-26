@@ -18,6 +18,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --from=builder /usr/local/src/bin/app /app
 
-EXPOSE 8080
+EXPOSE 1111
 
 CMD ["/app"]
