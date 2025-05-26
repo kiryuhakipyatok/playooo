@@ -4,13 +4,14 @@ services:
     name: my-app
     plan: free
     env: docker
-    buildCommand: docker build -t my-app .
-    startCommand: docker run -p 1111:1111 my-app
+    build:
+      context: .
+      dockerfile: Dockerfile
     envVars:
       - key: PGHOST
         fromDatabase:
           name: my-db
-          property: hostname
+          property: host
       - key: POSTGRES_USER
         fromDatabase:
           name: my-db
@@ -24,21 +25,32 @@ services:
           name: my-db
           property: database
       - key: PGPORT
-        value: "5432"
+        fromDatabase:
+          name: my-db
+          property: port
       - key: REDISHOST
         fromService:
+          type: redis
           name: my-redis
-          property: hostname
+          property: host
       - key: REDISPORT
-        value: "6379"
+        fromService:
+          type: redis
+          name: my-redis
+          property: port
       - key: TZ
         value: Europe/Moscow
+    port: 1111
     healthCheckPath: /health
 
   - type: redis
     name: my-redis
     plan: free
+    ipAllowList:
+      - 0.0.0.0/0
 
 databases:
   - name: my-db
     plan: free
+    ipAllowList:
+      - 0.0.0.0/0
