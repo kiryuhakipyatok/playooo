@@ -43,6 +43,8 @@ services:
   - type: redis
     name: my-redis
     plan: free
+    ipAllowList:
+      - source: "0.0.0.0/0"
 
 
 databases:
