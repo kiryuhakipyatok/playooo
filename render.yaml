@@ -1,0 +1,46 @@
+services:
+  app:
+    type: web
+    name: my-app
+    env: docker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    envVars:
+      - key: PGHOST
+        value: ${PGHOST}
+      - key: POSTGRES_USER
+        value: ${POSTGRES_USER}
+      - key: POSTGRES_PASSWORD
+        value: ${POSTGRES_PASSWORD}
+      - key: POSTGRES_DB
+        value: ${POSTGRES_DB}
+      - key: PGPORT
+        value: "5432"
+      - key: REDISHOST
+        value: ${REDISHOST}
+      - key: REDISPORT
+        value: "6379"
+      - key: TZ
+        value: Europe/Moscow
+    port: 1111
+    healthCheckPath: /health
+    autoDeploy: true
+
+  db:
+    type: postgres
+    name: my-db
+    plan: free
+    databaseName: ${POSTGRES_DB}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    ipAllowList:
+      - 0.0.0.0/0
+
+  redis:
+    type: redis
+    name: my-redis
+    plan: free
+    password: root
+    ipAllowList:
+      - 0.0.0.0/0
