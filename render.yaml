@@ -48,3 +48,5 @@ services:
 databases:
   - name: my-db
     plan: free
+    ipAllowList:
+      - 0.0.0.0/0
