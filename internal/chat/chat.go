@@ -8,6 +8,7 @@ import (
 )
 
 type Member struct{
+	login string
 	conn *websocket.Conn
 }
 
@@ -73,7 +74,8 @@ func (c *Chat) broadcast(b []byte, mt int) {
 	defer c.mu.Unlock()
 	for member := range c.members {
 		go func(ws *websocket.Conn) {
-			if err := member.conn.WriteMessage(mt, b); err != nil {
+			msg:=append([]byte(member.login + ": "), b...)
+			if err := member.conn.WriteMessage(mt, msg); err != nil {
 				log.Printf("error writing: %v", err)
 				ws.Conn.Close()
 				delete(c.members,member)
