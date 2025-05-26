@@ -38,17 +38,13 @@ services:
           property: port
       - key: TZ
         value: Europe/Moscow
-    port: 1111
     healthCheckPath: /health
 
   - type: redis
     name: my-redis
     plan: free
-    ipAllowList:
-      - 0.0.0.0/0
+
 
 databases:
   - name: my-db
     plan: free
-    ipAllowList:
-      - 0.0.0.0/0
