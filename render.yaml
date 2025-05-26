@@ -4,9 +4,7 @@ services:
     name: my-app
     plan: free
     env: docker
-    build:
-      context: .
-      dockerfile: Dockerfile
+    buildCommand: docker build -t my-app .
     envVars:
       - key: PGHOST
         fromDatabase:
