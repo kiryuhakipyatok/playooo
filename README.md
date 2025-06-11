@@ -35,11 +35,15 @@ Copy-Item config-example.yaml config.yaml
 ```
 Edit the .env file or config.yaml with your configuration.
 
-3. Start services:
+3. Running Migrations:
 ```powershell
-docker-compose up --build
+make up
 ```
-4. The application should now be running at http://localhost:1111.
+4. Start services:
+```powershell
+make docker-run
+```
+5. The application should now be running at http://localhost:1111.
 
 After starting the application, you can access the API documentation at:
 http://localhost:1111/swagger
