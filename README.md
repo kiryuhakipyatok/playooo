@@ -34,7 +34,7 @@ OR
 Copy-Item config-example.yaml config.yaml
 ```
 Edit the .env file or config.yaml with your configuration.
-```
+
 3. Start services:
 ```powershell
 docker-compose up --build
