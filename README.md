@@ -24,17 +24,20 @@ plaYoo is a pet project designed to help gamers find teammates for online multip
 ```powershell
 git clone https://github.com/kiryuhakipyatok/playooo
 cd plaYoo
-```powershell
+```
 2. Configure environment or config:
 ```powershell
 Copy-Item .env.example .env
+```
 OR 
 ```powershell
 Copy-Item config-example.yaml config.yaml
+```
 Edit the .env file or config.yaml with your configuration.
 3. Start services:
 ```powershell
 docker-compose up --build
+```
 4. The application should now be running at http://localhost:1111.
 
 After starting the application, you can access the API documentation at:
